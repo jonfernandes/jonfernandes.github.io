@@ -273,7 +273,9 @@
       scoreByTopic: Object.fromEntries(Object.keys(topics).map(t => [t, { right: 0, total: 0 }])),
       practiceTopic: null,
       practiceQuestion: null,
-      streak: 0
+      streak: 0,
+      assessmentAttempts: 0,
+      practiceAttempts: 0
     };
 
     const $ = (id) => document.getElementById(id);
@@ -296,6 +298,24 @@
       return u === a;
     }
 
+    function stepHint(topic, question, attempt) {
+      if (topic === "arithmetic") {
+        if (question.includes("+")) return attempt === 1 ? "Step 1: Add hundreds, then tens, then ones." : "Step 2: Recheck by subtracting your total from the bigger number.";
+        if (question.includes("-")) return attempt === 1 ? "Step 1: Subtract hundreds, tens and ones carefully." : "Step 2: Check by adding your answer back.";
+        return attempt === 1 ? "Step 1: Break multiplication into easier parts." : "Step 2: Use inverse division to check.";
+      }
+      if (topic === "fractions") {
+        if (question.includes("percentage")) return attempt === 1 ? "Step 1: Multiply the decimal by 100." : "Step 2: Add the percent sign only after finding the number.";
+        if (question.includes("% of")) return attempt === 1 ? "Step 1: Turn the percent into a decimal." : "Step 2: Multiply that decimal by the whole number.";
+        return attempt === 1 ? "Step 1: Divide numerator by denominator." : "Step 2: Write the decimal to tenths or hundredths.";
+      }
+      if (topic === "ratio") return attempt === 1 ? "Step 1: Find the scale factor from the first part." : "Step 2: Multiply the second part by the same factor.";
+      if (topic === "algebra") return attempt === 1 ? "Step 1: Isolate x by undoing the added number." : "Step 2: Put your x back into the equation to check.";
+      if (topic === "measurement") return attempt === 1 ? "Step 1: Pick the conversion fact you need." : "Step 2: Use x1000 for km->m and L->ml.";
+      if (topic === "geometry") return attempt === 1 ? "Step 1: Angles on a straight line total 180." : "Step 2: Subtract the known angle from 180.";
+      return "Try solving it one operation at a time.";
+    }
+
     function nextAssessmentQuestion() {
       state.assessmentIndex += 1;
       if (state.assessmentIndex >= assessmentPlan.length) {
@@ -305,6 +325,7 @@
       const topic = assessmentPlan[state.assessmentIndex];
       const q = topics[topic].makeQuestion();
       state.assessmentQuestions[state.assessmentIndex] = { ...q, topic };
+      state.assessmentAttempts = 0;
       $("assessmentProgress").textContent = `Question ${state.assessmentIndex + 1} of ${assessmentPlan.length}`;
       $("assessmentQuestion").textContent = q.q;
       $("assessmentAnswer").value = "";
@@ -318,13 +339,21 @@
       const user = $("assessmentAnswer").value;
       const correct = isCorrect(user, entry.a);
       const s = state.scoreByTopic[entry.topic];
-      s.total += 1;
-      if (correct) s.right += 1;
+      if (!entry.assessed) {
+        s.total += 1;
+        if (correct) s.right += 1;
+        entry.assessed = true;
+      }
 
       const status = $("assessmentStatus");
       status.className = `status ${correct ? "good" : "bad"}`;
-      status.textContent = correct ? "Nice work! Correct." : `Not quite. Correct answer: ${entry.a}`;
-      setTimeout(nextAssessmentQuestion, 550);
+      if (correct) {
+        status.textContent = "Nice work! Correct.";
+        setTimeout(nextAssessmentQuestion, 550);
+      } else {
+        state.assessmentAttempts += 1;
+        status.textContent = `Not quite. ${stepHint(entry.topic, entry.q, state.assessmentAttempts)}`;
+      }
     }
 
     function showResults() {
@@ -370,6 +399,7 @@
       const topic = state.practiceTopic;
       const q = topics[topic].makeQuestion();
       state.practiceQuestion = q;
+      state.practiceAttempts = 0;
       $("practiceQuestion").textContent = q.q;
       $("practiceAnswer").value = "";
       $("practiceStatus").textContent = "";
@@ -382,12 +412,17 @@
       const user = $("practiceAnswer").value;
       const ok = isCorrect(user, state.practiceQuestion.a);
       if (ok) state.streak += 1;
-      else state.streak = 0;
+      else {
+        state.streak = 0;
+        state.practiceAttempts += 1;
+      }
 
       $("streak").textContent = `Streak: ${state.streak}`;
       const status = $("practiceStatus");
       status.className = `status ${ok ? "good" : "bad"}`;
-      status.textContent = ok ? "Correct. Great momentum." : `Keep going. Correct answer: ${state.practiceQuestion.a}`;
+      status.textContent = ok
+        ? "Correct. Great momentum."
+        : `Keep going. ${stepHint(state.practiceTopic, state.practiceQuestion.q, state.practiceAttempts)}`;
     }
 
     $("startAssessment").addEventListener("click", () => {
