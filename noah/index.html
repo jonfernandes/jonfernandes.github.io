@@ -358,8 +358,8 @@
         status.textContent = "Nice work! Correct.";
         setTimeout(nextAssessmentQuestion, 550);
       } else {
-        status.textContent = `Not quite. Correct answer: ${entry.a}`;
-        setTimeout(nextAssessmentQuestion, 900);
+        status.textContent = "Not quite.";
+        setTimeout(nextAssessmentQuestion, 550);
       }
     }
 
@@ -427,9 +427,18 @@
       $("streak").textContent = `Streak: ${state.streak}`;
       const status = $("practiceStatus");
       status.className = `status ${ok ? "good" : "bad"}`;
-      status.textContent = ok
-        ? "Correct. Great momentum."
-        : guidedMessage(state.practiceTopic, state.practiceQuestion.q, state.practiceAttempts);
+      if (ok) {
+        status.textContent = "Correct. Great momentum.";
+        return;
+      }
+
+      if (state.practiceAttempts >= 3) {
+        status.textContent = "Let's try a new question.";
+        setTimeout(newPracticeQuestion, 700);
+        return;
+      }
+
+      status.textContent = guidedMessage(state.practiceTopic, state.practiceQuestion.q, state.practiceAttempts);
     }
 
     $("startAssessment").addEventListener("click", () => {
