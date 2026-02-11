@@ -358,8 +358,8 @@
         status.textContent = "Nice work! Correct.";
         setTimeout(nextAssessmentQuestion, 550);
       } else {
-        state.assessmentAttempts += 1;
-        status.textContent = guidedMessage(entry.topic, entry.q, state.assessmentAttempts);
+        status.textContent = `Not quite. Correct answer: ${entry.a}`;
+        setTimeout(nextAssessmentQuestion, 900);
       }
     }
 
