@@ -316,6 +316,13 @@
       return "Try solving it one operation at a time.";
     }
 
+    function guidedMessage(topic, question, attempt) {
+      const first = stepHint(topic, question, 1);
+      const second = stepHint(topic, question, 2);
+      if (attempt <= 1) return `Let's solve it step by step. 1) ${first}`;
+      return `Let's solve it step by step. 1) ${first} 2) ${second} 3) Try again with your new working.`;
+    }
+
     function nextAssessmentQuestion() {
       state.assessmentIndex += 1;
       if (state.assessmentIndex >= assessmentPlan.length) {
@@ -352,7 +359,7 @@
         setTimeout(nextAssessmentQuestion, 550);
       } else {
         state.assessmentAttempts += 1;
-        status.textContent = `Not quite. ${stepHint(entry.topic, entry.q, state.assessmentAttempts)}`;
+        status.textContent = guidedMessage(entry.topic, entry.q, state.assessmentAttempts);
       }
     }
 
@@ -422,7 +429,7 @@
       status.className = `status ${ok ? "good" : "bad"}`;
       status.textContent = ok
         ? "Correct. Great momentum."
-        : `Keep going. ${stepHint(state.practiceTopic, state.practiceQuestion.q, state.practiceAttempts)}`;
+        : guidedMessage(state.practiceTopic, state.practiceQuestion.q, state.practiceAttempts);
     }
 
     $("startAssessment").addEventListener("click", () => {
