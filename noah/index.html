@@ -275,7 +275,9 @@
       practiceQuestion: null,
       streak: 0,
       assessmentAttempts: 0,
-      practiceAttempts: 0
+      practiceAttempts: 0,
+      assessmentLocked: false,
+      practiceLocked: false
     };
 
     const $ = (id) => document.getElementById(id);
@@ -324,6 +326,7 @@
     }
 
     function nextAssessmentQuestion() {
+      state.assessmentLocked = false;
       state.assessmentIndex += 1;
       if (state.assessmentIndex >= assessmentPlan.length) {
         showResults();
@@ -336,12 +339,15 @@
       $("assessmentProgress").textContent = `Question ${state.assessmentIndex + 1} of ${assessmentPlan.length}`;
       $("assessmentQuestion").textContent = q.q;
       $("assessmentAnswer").value = "";
+      $("assessmentSubmit").disabled = false;
+      $("assessmentAnswer").disabled = false;
       $("assessmentAnswer").focus();
       $("assessmentStatus").textContent = "";
       $("assessmentStatus").className = "status";
     }
 
     function submitAssessment() {
+      if (state.assessmentLocked) return;
       const entry = state.assessmentQuestions[state.assessmentIndex];
       const user = $("assessmentAnswer").value;
       const correct = isCorrect(user, entry.a);
@@ -354,6 +360,9 @@
 
       const status = $("assessmentStatus");
       status.className = `status ${correct ? "good" : "bad"}`;
+      state.assessmentLocked = true;
+      $("assessmentSubmit").disabled = true;
+      $("assessmentAnswer").disabled = true;
       if (correct) {
         status.textContent = "Nice work! Correct.";
         setTimeout(nextAssessmentQuestion, 550);
@@ -403,12 +412,15 @@
     }
 
     function newPracticeQuestion() {
+      state.practiceLocked = false;
       const topic = state.practiceTopic;
       const q = topics[topic].makeQuestion();
       state.practiceQuestion = q;
       state.practiceAttempts = 0;
       $("practiceQuestion").textContent = q.q;
       $("practiceAnswer").value = "";
+      $("practiceSubmit").disabled = false;
+      $("practiceAnswer").disabled = false;
       $("practiceStatus").textContent = "";
       $("practiceStatus").className = "status";
       $("practiceHint").textContent = `Tip: ${topics[topic].hint}`;
@@ -416,6 +428,7 @@
     }
 
     function submitPractice() {
+      if (state.practiceLocked) return;
       const user = $("practiceAnswer").value;
       const ok = isCorrect(user, state.practiceQuestion.a);
       if (ok) state.streak += 1;
@@ -433,6 +446,9 @@
       }
 
       if (state.practiceAttempts >= 3) {
+        state.practiceLocked = true;
+        $("practiceSubmit").disabled = true;
+        $("practiceAnswer").disabled = true;
         status.textContent = "Let's try a new question.";
         setTimeout(newPracticeQuestion, 700);
         return;
