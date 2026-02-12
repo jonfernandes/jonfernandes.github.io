@@ -1,0 +1,75 @@
+:root {
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+  color: #1b2430;
+  background: linear-gradient(180deg, #f4f7ff 0%, #eef9ff 100%);
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.intro {
+  font-size: 1.05rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 54, 136, 0.08);
+}
+
+.question {
+  border-bottom: 1px solid #dce8ff;
+  padding: 0.7rem 0;
+}
+
+.question:last-child {
+  border-bottom: 0;
+}
+
+label {
+  display: block;
+  margin: 0.35rem 0;
+}
+
+button {
+  margin-top: 0.8rem;
+  border: 0;
+  background: #246bff;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+}
+
+.plan-item {
+  background: #f8fbff;
+  border: 1px solid #dce8ff;
+  border-radius: 12px;
+  padding: 0.8rem;
+  margin: 0.8rem 0;
+}
+
+.badge {
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+}
+
+.badge.beginning {
+  background: #ffe6e6;
+  color: #8f1f1f;
+}
+
+.badge.developing {
+  background: #fff6da;
+  color: #8a6000;
+}

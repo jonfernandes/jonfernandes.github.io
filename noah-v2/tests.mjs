@@ -2,51 +2,52 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   curriculumTopics,
+  getPretestQuestions,
   calculateTopicPerformance,
   buildLearningPlan,
-  getPretestQuestions,
-} from './logic.mjs';
+  summariseProgress,
+} from './src/shared/curriculum.mjs';
 
-test('pretest includes one question per topic', () => {
+test('pretest returns one question per Year 6 curriculum topic', () => {
   const questions = getPretestQuestions();
   assert.equal(questions.length, curriculumTopics.length);
-  const topicSet = new Set(questions.map((q) => q.topicId));
-  assert.equal(topicSet.size, curriculumTopics.length);
+  assert.equal(new Set(questions.map((q) => q.topicId)).size, curriculumTopics.length);
 });
 
-test('calculates topic performance by correctness ratio', () => {
-  const answers = [
+test('topic performance correctly maps scores to secure/developing/beginning', () => {
+  const performance = calculateTopicPerformance([
     { topicId: 'fractions', correct: true },
     { topicId: 'fractions', correct: false },
     { topicId: 'ratio', correct: true },
-  ];
+    { topicId: 'ratio', correct: true },
+    { topicId: 'algebra', correct: false },
+  ]);
 
-  const performance = calculateTopicPerformance(answers);
-
-  assert.equal(performance.fractions.score, 0.5);
   assert.equal(performance.fractions.level, 'developing');
-  assert.equal(performance.ratio.score, 1);
   assert.equal(performance.ratio.level, 'secure');
+  assert.equal(performance.algebra.level, 'beginning');
 });
 
-test('builds learning plan with weakest topics first', () => {
+test('learning plan prioritises weakest topics and excludes secure topics', () => {
   const performance = {
-    fractions: { score: 0.1, level: 'beginning' },
-    ratio: { score: 0.45, level: 'developing' },
-    algebra: { score: 0.85, level: 'secure' },
+    fractions: { score: 0.2, level: 'beginning' },
+    ratio: { score: 0.5, level: 'developing' },
+    algebra: { score: 1, level: 'secure' },
   };
 
   const plan = buildLearningPlan(performance);
 
-  assert.deepEqual(
-    plan.map((item) => item.topicId),
-    ['fractions', 'ratio']
-  );
-  assert.equal(plan[0].recommendedMinutes >= plan[1].recommendedMinutes, true);
+  assert.deepEqual(plan.map((item) => item.topicId), ['fractions', 'ratio']);
+  assert.equal(plan[0].recommendedMinutes, 90);
+  assert.equal(plan[1].recommendedMinutes, 60);
 });
 
-test('returns full support plan when no answers provided', () => {
-  const plan = buildLearningPlan({});
+test('empty input produces full starter plan and progress summary', () => {
+  const performance = calculateTopicPerformance([]);
+  const plan = buildLearningPlan(performance);
+  const progress = summariseProgress(performance);
+
   assert.equal(plan.length, curriculumTopics.length);
-  assert.equal(plan.every((item) => item.level === 'beginning'), true);
+  assert.equal(progress.secureCount, 0);
+  assert.equal(progress.totalTopics, curriculumTopics.length);
 });
