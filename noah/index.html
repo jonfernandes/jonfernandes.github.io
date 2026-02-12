@@ -10,7 +10,6 @@
       --card: #ffffff;
       --ink: #123;
       --brand: #0e7c86;
-      --accent: #f6a821;
       --ok: #1f9d55;
       --bad: #d64545;
       --muted: #58717b;
@@ -63,7 +62,7 @@
       align-items: center;
     }
 
-    button, input, select {
+    button, input {
       border: 2px solid #c5dde6;
       border-radius: 10px;
       font-size: 1rem;
@@ -81,9 +80,6 @@
 
     button:hover { transform: translateY(-1px); }
     button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
-
-    .btn-alt { background: var(--accent); color: #222; }
-    .btn-ok { background: var(--ok); }
 
     .hidden { display: none; }
 
@@ -130,15 +126,21 @@
     }
 
     .small { font-size: .92rem; color: var(--muted); }
+
+    #learningQuestions {
+      margin-top: 8px;
+      padding-left: 24px;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Noah Maths Lab</h1>
-    <p class="subtitle">Year 6 UK maths: assessment first, then smart practice for weak topics.</p>
+    <p class="subtitle">Year 6 UK maths: assessment first, then focused learning questions for weak topics.</p>
 
     <section class="card" id="intro">
-      <p><strong>How this works:</strong> take a quick baseline quiz, then the app picks topics to improve and generates fresh questions.</p>
+      <p><strong>How this works:</strong> complete a baseline assessment one question at a time. Then, if any weak areas are found, you get up to 10 learning questions with no answers shown.</p>
       <button id="startAssessment">Start Assessment</button>
     </section>
 
@@ -158,37 +160,19 @@
       <h2 style="margin-top:0">Assessment Results</h2>
       <div id="scoreLine"></div>
       <div class="topic-grid" id="topicSummary"></div>
-      <div class="row" style="margin-top: 12px;">
-        <label for="practiceTopic"><strong>Practice topic:</strong></label>
-        <select id="practiceTopic"></select>
-        <button id="beginPractice" class="btn-alt">Start Practice</button>
-      </div>
-    </section>
-
-    <section class="card hidden" id="practiceBox">
-      <div class="row">
-        <span class="pill" style="background:#1f9d55" id="streak">Streak: 0</span>
-        <span class="small" id="practiceHint"></span>
-      </div>
-      <div class="q" id="practiceQuestion"></div>
-      <div class="row">
-        <input id="practiceAnswer" autocomplete="off" inputmode="decimal" placeholder="Type answer">
-        <button id="practiceSubmit" class="btn-ok">Check</button>
-        <button id="nextPractice">Next Question</button>
-      </div>
-      <div class="status" id="practiceStatus"></div>
+      <h3>Learning Questions</h3>
+      <p class="small" id="learningIntro"></p>
+      <ol id="learningQuestions"></ol>
     </section>
   </div>
 
   <script>
     function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-    function round2(n) { return Math.round(n * 100) / 100; }
     function norm(s) { return String(s).trim().toLowerCase().replace(/\s+/g, " "); }
 
     const topics = {
       arithmetic: {
         label: "Arithmetic",
-        hint: "Use place value and inverse operations to check quickly.",
         makeQuestion() {
           const mode = randInt(1, 3);
           if (mode === 1) {
@@ -205,7 +189,6 @@
       },
       fractions: {
         label: "Fractions, Decimals & Percentages",
-        hint: "Try converting between fraction, decimal and percent forms.",
         makeQuestion() {
           const mode = randInt(1, 3);
           if (mode === 1) {
@@ -224,7 +207,6 @@
       },
       ratio: {
         label: "Ratio & Proportion",
-        hint: "Scale both parts by the same factor.",
         makeQuestion() {
           const a = randInt(1, 5), b = randInt(2, 6), m = randInt(2, 5);
           return { q: `In the ratio ${a}:${b}, if first part is ${a * m}, second part is ?`, a: String(b * m) };
@@ -232,15 +214,13 @@
       },
       algebra: {
         label: "Algebra",
-        hint: "Undo operations in reverse order.",
         makeQuestion() {
-          const x = randInt(2, 20), c = randInt(2, 12), d = randInt(1, 9);
-          return { q: `Solve: x + ${d} = ${x + d}`, a: String(x) + " or " + String(x) };
+          const x = randInt(2, 20), d = randInt(1, 9);
+          return { q: `Solve: x + ${d} = ${x + d}`, a: String(x) };
         }
       },
       measurement: {
         label: "Measurement",
-        hint: "Remember key conversions: 1000m=1km, 100cm=1m, 1000ml=1L.",
         makeQuestion() {
           const mode = randInt(1, 2);
           if (mode === 1) {
@@ -253,7 +233,6 @@
       },
       geometry: {
         label: "Geometry",
-        hint: "Angles on a straight line total 180°.",
         makeQuestion() {
           const a = randInt(30, 150);
           return { q: `Angle A and B are on a straight line. If A=${a}°, B=?`, a: String(180 - a) };
@@ -270,14 +249,8 @@
     const state = {
       assessmentIndex: -1,
       assessmentQuestions: [],
-      scoreByTopic: Object.fromEntries(Object.keys(topics).map(t => [t, { right: 0, total: 0 }])),
-      practiceTopic: null,
-      practiceQuestion: null,
-      streak: 0,
-      assessmentAttempts: 0,
-      practiceAttempts: 0,
-      assessmentLocked: false,
-      practiceLocked: false
+      scoreByTopic: Object.fromEntries(Object.keys(topics).map((t) => [t, { right: 0, total: 0 }])),
+      assessmentLocked: false
     };
 
     const $ = (id) => document.getElementById(id);
@@ -290,9 +263,6 @@
       const u = parseUserAnswer(user);
       if (!u) return false;
       const a = norm(answer);
-      if (a.includes(" or ")) {
-        return a.split(" or ").map(norm).includes(u);
-      }
       const un = Number(u), an = Number(a);
       if (Number.isFinite(un) && Number.isFinite(an)) {
         return Math.abs(un - an) < 0.001;
@@ -300,29 +270,26 @@
       return u === a;
     }
 
-    function stepHint(topic, question, attempt) {
-      if (topic === "arithmetic") {
-        if (question.includes("+")) return attempt === 1 ? "Step 1: Add hundreds, then tens, then ones." : "Step 2: Recheck by subtracting your total from the bigger number.";
-        if (question.includes("-")) return attempt === 1 ? "Step 1: Subtract hundreds, tens and ones carefully." : "Step 2: Check by adding your answer back.";
-        return attempt === 1 ? "Step 1: Break multiplication into easier parts." : "Step 2: Use inverse division to check.";
-      }
-      if (topic === "fractions") {
-        if (question.includes("percentage")) return attempt === 1 ? "Step 1: Multiply the decimal by 100." : "Step 2: Add the percent sign only after finding the number.";
-        if (question.includes("% of")) return attempt === 1 ? "Step 1: Turn the percent into a decimal." : "Step 2: Multiply that decimal by the whole number.";
-        return attempt === 1 ? "Step 1: Divide numerator by denominator." : "Step 2: Write the decimal to tenths or hundredths.";
-      }
-      if (topic === "ratio") return attempt === 1 ? "Step 1: Find the scale factor from the first part." : "Step 2: Multiply the second part by the same factor.";
-      if (topic === "algebra") return attempt === 1 ? "Step 1: Isolate x by undoing the added number." : "Step 2: Put your x back into the equation to check.";
-      if (topic === "measurement") return attempt === 1 ? "Step 1: Pick the conversion fact you need." : "Step 2: Use x1000 for km->m and L->ml.";
-      if (topic === "geometry") return attempt === 1 ? "Step 1: Angles on a straight line total 180." : "Step 2: Subtract the known angle from 180.";
-      return "Try solving it one operation at a time.";
+    function getWeakTopics() {
+      return Object.keys(topics).filter((key) => {
+        const score = state.scoreByTopic[key];
+        return score.total > 0 && score.right < score.total;
+      });
     }
 
-    function guidedMessage(topic, question, attempt) {
-      const first = stepHint(topic, question, 1);
-      const second = stepHint(topic, question, 2);
-      if (attempt <= 1) return `Let's solve it step by step. 1) ${first}`;
-      return `Let's solve it step by step. 1) ${first} 2) ${second} 3) Try again with your new working.`;
+    function buildLearningQuestions(weakTopics) {
+      const maxQuestions = 10;
+      const result = [];
+      let index = 0;
+
+      while (result.length < maxQuestions) {
+        const topic = weakTopics[index % weakTopics.length];
+        result.push({ topic, q: topics[topic].makeQuestion().q });
+        index += 1;
+        if (index > maxQuestions * 2 && weakTopics.length === 1) break;
+      }
+
+      return result.slice(0, maxQuestions);
     }
 
     function nextAssessmentQuestion() {
@@ -332,10 +299,10 @@
         showResults();
         return;
       }
+
       const topic = assessmentPlan[state.assessmentIndex];
       const q = topics[topic].makeQuestion();
-      state.assessmentQuestions[state.assessmentIndex] = { ...q, topic };
-      state.assessmentAttempts = 0;
+      state.assessmentQuestions[state.assessmentIndex] = { ...q, topic, assessed: false };
       $("assessmentProgress").textContent = `Question ${state.assessmentIndex + 1} of ${assessmentPlan.length}`;
       $("assessmentQuestion").textContent = q.q;
       $("assessmentAnswer").value = "";
@@ -348,44 +315,43 @@
 
     function submitAssessment() {
       if (state.assessmentLocked) return;
+
       const entry = state.assessmentQuestions[state.assessmentIndex];
       const user = $("assessmentAnswer").value;
       const correct = isCorrect(user, entry.a);
-      const s = state.scoreByTopic[entry.topic];
+
       if (!entry.assessed) {
-        s.total += 1;
-        if (correct) s.right += 1;
+        state.scoreByTopic[entry.topic].total += 1;
+        if (correct) state.scoreByTopic[entry.topic].right += 1;
         entry.assessed = true;
       }
 
       const status = $("assessmentStatus");
       status.className = `status ${correct ? "good" : "bad"}`;
+      status.textContent = correct ? "Nice work! Correct." : "Not quite.";
+
       state.assessmentLocked = true;
       $("assessmentSubmit").disabled = true;
       $("assessmentAnswer").disabled = true;
-      if (correct) {
-        status.textContent = "Nice work! Correct.";
-        setTimeout(nextAssessmentQuestion, 550);
-      } else {
-        status.textContent = "Not quite.";
-        setTimeout(nextAssessmentQuestion, 550);
-      }
+      setTimeout(nextAssessmentQuestion, 550);
     }
 
     function showResults() {
       $("assessmentBox").classList.add("hidden");
       $("resultsBox").classList.remove("hidden");
 
-      let totalRight = 0, totalQ = 0;
+      let totalRight = 0;
+      let totalQ = 0;
       for (const key of Object.keys(state.scoreByTopic)) {
         totalRight += state.scoreByTopic[key].right;
         totalQ += state.scoreByTopic[key].total;
       }
+
       const pct = Math.round((totalRight / Math.max(totalQ, 1)) * 100);
       $("scoreLine").innerHTML = `<p><strong>Total score:</strong> ${totalRight}/${totalQ} (${pct}%)</p>`;
 
-      const box = $("topicSummary");
-      box.innerHTML = "";
+      const summaryBox = $("topicSummary");
+      summaryBox.innerHTML = "";
       const topicOrder = Object.keys(topics).sort((a, b) => {
         const pa = state.scoreByTopic[a].total ? state.scoreByTopic[a].right / state.scoreByTopic[a].total : 1;
         const pb = state.scoreByTopic[b].total ? state.scoreByTopic[b].right / state.scoreByTopic[b].total : 1;
@@ -398,63 +364,27 @@
         const card = document.createElement("div");
         card.className = "topic-card";
         card.innerHTML = `<div class="topic-title">${topics[key].label}</div><div class="small">${t.right}/${t.total} correct (${topicPct}%)</div>`;
-        box.appendChild(card);
+        summaryBox.appendChild(card);
       }
 
-      const picker = $("practiceTopic");
-      picker.innerHTML = "";
-      for (const key of topicOrder) {
-        const o = document.createElement("option");
-        o.value = key;
-        o.textContent = topics[key].label;
-        picker.appendChild(o);
-      }
-    }
+      const weakTopics = getWeakTopics();
+      const learningIntro = $("learningIntro");
+      const learningList = $("learningQuestions");
+      learningList.innerHTML = "";
 
-    function newPracticeQuestion() {
-      state.practiceLocked = false;
-      const topic = state.practiceTopic;
-      const q = topics[topic].makeQuestion();
-      state.practiceQuestion = q;
-      state.practiceAttempts = 0;
-      $("practiceQuestion").textContent = q.q;
-      $("practiceAnswer").value = "";
-      $("practiceSubmit").disabled = false;
-      $("practiceAnswer").disabled = false;
-      $("practiceStatus").textContent = "";
-      $("practiceStatus").className = "status";
-      $("practiceHint").textContent = `Tip: ${topics[topic].hint}`;
-      $("practiceAnswer").focus();
-    }
-
-    function submitPractice() {
-      if (state.practiceLocked) return;
-      const user = $("practiceAnswer").value;
-      const ok = isCorrect(user, state.practiceQuestion.a);
-      if (ok) state.streak += 1;
-      else {
-        state.streak = 0;
-        state.practiceAttempts += 1;
-      }
-
-      $("streak").textContent = `Streak: ${state.streak}`;
-      const status = $("practiceStatus");
-      status.className = `status ${ok ? "good" : "bad"}`;
-      if (ok) {
-        status.textContent = "Correct. Great momentum.";
+      if (!weakTopics.length) {
+        learningIntro.textContent = "Great work — no weak areas were detected, so no extra learning questions are needed right now.";
         return;
       }
 
-      if (state.practiceAttempts >= 3) {
-        state.practiceLocked = true;
-        $("practiceSubmit").disabled = true;
-        $("practiceAnswer").disabled = true;
-        status.textContent = "Let's try a new question.";
-        setTimeout(newPracticeQuestion, 700);
-        return;
-      }
+      const learningQuestions = buildLearningQuestions(weakTopics);
+      learningIntro.textContent = `Weak topics found: ${weakTopics.map((topic) => topics[topic].label).join(", ")}. Here are ${learningQuestions.length} questions to practise (answers intentionally hidden).`;
 
-      status.textContent = guidedMessage(state.practiceTopic, state.practiceQuestion.q, state.practiceAttempts);
+      for (const item of learningQuestions) {
+        const li = document.createElement("li");
+        li.textContent = `${topics[item.topic].label}: ${item.q}`;
+        learningList.appendChild(li);
+      }
     }
 
     $("startAssessment").addEventListener("click", () => {
@@ -467,21 +397,6 @@
     $("assessmentAnswer").addEventListener("keydown", (e) => {
       if (e.key === "Enter") submitAssessment();
     });
-
-    $("beginPractice").addEventListener("click", () => {
-      state.practiceTopic = $("practiceTopic").value;
-      state.streak = 0;
-      $("resultsBox").classList.add("hidden");
-      $("practiceBox").classList.remove("hidden");
-      $("streak").textContent = "Streak: 0";
-      newPracticeQuestion();
-    });
-
-    $("practiceSubmit").addEventListener("click", submitPractice);
-    $("practiceAnswer").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") submitPractice();
-    });
-    $("nextPractice").addEventListener("click", newPracticeQuestion);
   </script>
 </body>
 </html>
