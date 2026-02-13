@@ -142,6 +142,7 @@ function App() {
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
   const [isOfflineMode, setIsOfflineMode] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   useEffect(() => {
     fetch('./api/pretest')
@@ -179,6 +180,10 @@ function App() {
     }
   };
 
+  const currentQuestion = questions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
+  const hasCurrentAnswer = answers[currentQuestionIndex] !== undefined;
+
   return h('main', { className: 'app' }, [
     h('h1', { key: 'h1' }, '🚀 Year 6 Maths Mission'),
     h('p', { key: 'intro', className: 'intro' }, 'Take this quick check-up first, then follow your personal plan.'),
@@ -191,24 +196,39 @@ function App() {
         'form',
         { key: 'form', onSubmit: submit },
         [
-          ...questions.map((q, index) =>
-            h('div', { key: q.topicId, className: 'question' }, [
-              h('p', { key: `p-${q.topicId}` }, [h('strong', { key: `s-${q.topicId}` }, `Q${index + 1}. `), q.prompt]),
-              ...q.options.map((option) =>
-                h('label', { key: `${q.topicId}-${option}` }, [
-                  h('input', {
-                    type: 'radio',
-                    name: `q-${index}`,
-                    value: option,
-                    required: true,
-                    onChange: (e) => setAnswers((prev) => ({ ...prev, [index]: e.target.value })),
-                  }),
-                  option,
-                ])
-              ),
-            ])
-          ),
-          h('button', { key: 'button', type: 'submit' }, 'Build my learning plan'),
+          currentQuestion
+            ? h('p', { key: 'progress' }, `Question ${currentQuestionIndex + 1} of ${questions.length}`)
+            : null,
+          currentQuestion
+            ? h('div', { key: currentQuestion.topicId, className: 'question' }, [
+                h('p', { key: `p-${currentQuestion.topicId}` }, [h('strong', { key: `s-${currentQuestion.topicId}` }, `Q${currentQuestionIndex + 1}. `), currentQuestion.prompt]),
+                ...currentQuestion.options.map((option) =>
+                  h('label', { key: `${currentQuestion.topicId}-${option}` }, [
+                    h('input', {
+                      type: 'radio',
+                      name: `q-${currentQuestionIndex}`,
+                      value: option,
+                      checked: answers[currentQuestionIndex] === option,
+                      required: true,
+                      onChange: (e) => setAnswers((prev) => ({ ...prev, [currentQuestionIndex]: e.target.value })),
+                    }),
+                    option,
+                  ])
+                ),
+              ])
+            : null,
+          !isLastQuestion
+            ? h(
+                'button',
+                {
+                  key: 'next',
+                  type: 'button',
+                  disabled: !hasCurrentAnswer,
+                  onClick: () => setCurrentQuestionIndex((idx) => Math.min(idx + 1, questions.length - 1)),
+                },
+                'Next question'
+              )
+            : h('button', { key: 'button', type: 'submit', disabled: !hasCurrentAnswer }, 'Build my learning plan'),
         ]
       ),
     ]),
