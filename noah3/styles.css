@@ -41,6 +41,23 @@ body {
   margin: 8px 0 18px;
 }
 
+.hero {
+  position: relative;
+  padding-right: 84px;
+}
+
+.hero-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
 .screen {
   display: none;
   animation: fade 220ms ease-in;
@@ -155,6 +172,15 @@ body {
 @media (max-width: 640px) {
   .app {
     padding: 16px;
+  }
+
+  .hero {
+    padding-right: 70px;
+  }
+
+  .hero-icon {
+    width: 56px;
+    height: 56px;
   }
 
   .status-row {
