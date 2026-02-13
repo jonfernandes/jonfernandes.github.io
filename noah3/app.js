@@ -247,6 +247,9 @@ nextBtn.addEventListener("click", handleNext);
 toLearningBtn.addEventListener("click", startLearningMode);
 restartBtn.addEventListener("click", resetToHome);
 document.getElementById("play-again-btn").addEventListener("click", resetToHome);
+document.querySelectorAll(".quit-btn").forEach((button) => {
+  button.addEventListener("click", resetToHome);
+});
 
 function showScreen(name) {
   Object.values(screens).forEach((screen) => screen.classList.remove("active"));

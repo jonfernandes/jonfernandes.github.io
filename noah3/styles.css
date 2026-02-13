@@ -147,6 +147,11 @@ body {
   color: #fff;
 }
 
+.btn-quit {
+  background: #fff4e6;
+  color: #9c3600;
+}
+
 @media (max-width: 640px) {
   .app {
     padding: 16px;
