@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Year 6 Maths Mission</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <h1>Year 6 Maths Mission</h1>
+      <p>10-question check, then smart practice on tricky bits.</p>
+    </header>
+
+    <section id="screen-home" class="screen active" aria-live="polite">
+      <h2>Ready to start?</h2>
+      <p>
+        We will do <strong>10 test questions</strong> based on the England Year 6 maths programme,
+        then move to learning mode with up to <strong>10 practice questions</strong> in your weakest areas.
+      </p>
+      <button id="start-btn" class="btn btn-primary">Start Mission</button>
+    </section>
+
+    <section id="screen-quiz" class="screen" aria-live="polite">
+      <div class="status-row">
+        <p id="mode-label" class="pill"></p>
+        <p id="progress"></p>
+      </div>
+      <h2 id="question-text"></h2>
+      <p id="topic-tag" class="topic"></p>
+      <div id="answers" class="answers"></div>
+      <p id="feedback" class="feedback" role="status"></p>
+      <button id="next-btn" class="btn" disabled>Next</button>
+    </section>
+
+    <section id="screen-summary" class="screen" aria-live="polite">
+      <h2 id="summary-title"></h2>
+      <p id="summary-text"></p>
+      <div id="weakness-list" class="weakness-list"></div>
+      <button id="to-learning-btn" class="btn btn-primary">Start Learning Mode</button>
+      <button id="restart-btn" class="btn">Play Again</button>
+    </section>
+
+    <section id="screen-finish" class="screen" aria-live="polite">
+      <h2>Mission Complete</h2>
+      <p id="finish-text"></p>
+      <button id="play-again-btn" class="btn btn-primary">Try Again</button>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
