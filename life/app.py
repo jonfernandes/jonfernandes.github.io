@@ -73,7 +73,7 @@ html_template = '''
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Life</title>
+    <title>You</title>
     <script>
         let childCount = 0;
         
@@ -248,4 +248,5 @@ def child(age, sex, leave_home=18):
     sns.heatmap(grid_data, cmap=grid_colors, linewidths=1, linecolor='black', cbar=False, square=True, xticklabels=False, yticklabels=False)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
