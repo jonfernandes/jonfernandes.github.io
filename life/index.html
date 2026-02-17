@@ -259,15 +259,17 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (let y = 0; y < rows; y += 1) {
-        // Vertically flip render so row order maps correctly from top (age 1) to bottom (current age).
-        const ageAtRow = y + 1;
-        const drawY = rows - 1 - y;
-        const adulthoodYears = 19;
-        const adulthoodBeginsAt = Math.max(1, currentAge - adulthoodYears + 1);
-        const yearly = Math.max(0, Math.round(visitParentsWeeks + (Math.random() * 2 - 1)));
-
+        // Top row starts at birth/earlier years; lower rows move forward in time.
+        const yearFromBirth = y;
         for (let x = 0; x < cols; x += 1) {
-          const on = ageAtRow >= adulthoodBeginsAt ? true : x < yearly;
+          const adultStart = 19;
+          let on = false;
+          if (yearFromBirth >= Math.max(0, rows - adultStart)) {
+            on = true;
+          } else {
+            const yearly = Math.max(0, Math.round(visitParentsWeeks + (Math.random() * 2 - 1)));
+            on = x < yearly;
+          }
 
           ctx.fillStyle = on ? "#6b7280" : "#ffffff";
           ctx.fillRect(x * cellW, drawY * cellH, cellW, cellH);
