@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Entry Form</title>
+</head>
+<body>
+    <h1>Data Entry</h1>
+    <form method="post">
+        Age: <input type="number" name="age" required><br>
+        Sex: <input type="radio" name="sex" value="M" required> Male
+             <input type="radio" name="sex" value="F" required> Female<br>
+        Is your mother alive? <input type="checkbox" name="mother_alive" id="mother_alive">
+        Mother's Age: <input type="number" name="mother_age"><br>
+        Is your father alive? <input type="checkbox" name="father_alive" id="father_alive">
+        Father's Age: <input type="number" name="father_age"><br>
+        Have children? <input type="checkbox" name="has_children" id="has_children">
+        Children's Ages and Sexes (e.g., 5,M;3,F): <input type="text" name="children_info"><br>
+        <input type="submit" value="Submit">
+    </form>
+    <hr>
+    <div>{{ plots_html|safe }}</div>
+</body>
+</html>

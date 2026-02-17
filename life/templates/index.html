@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Children Age and Sex Input</title>
+    <script>
+        function addChild() {
+            console.log("Adding a child input field");
+            var container = document.getElementById("children-container");
+            var childInput = document.createElement("div");
+            childInput.innerHTML = `Age: <input type="number" name="age" required> 
+                                    Sex: <select name="sex">
+                                            <option value="M">Male</option>
+                                            <option value="F">Female</option>
+                                         </select><br>`;
+            container.appendChild(childInput);
+        }
+    </script>
+</head>
+<body>
+    <h1>Input Child Age and Sex</h1>
+    <form method="post">
+        <div id="children-container">
+            <!-- Initial child input -->
+            Age: <input type="number" name="age" required> 
+            Sex: <select name="sex">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                 </select><br>
+        </div>
+        <button type="button" onclick="addChild()">Add Another Child</button><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    {% if images %}
+        <h2>Heatmap Outputs</h2>
+        {% for image in images %}
+            <img src="data:image/png;base64,{{ image }}" alt="Heatmap">
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
