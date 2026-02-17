@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>life/app.py</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem 1rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        background: #0f172a;
+        color: #e2e8f0;
+      }
+      main {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin-top: 0;
+        font-size: 1.25rem;
+      }
+      pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: #020617;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 1rem;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>life/app.py</h1>
+      <pre>from flask import Flask, render_template_string, request
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import datetime
+import io
+import base64
+
+app = Flask(__name__)
+
+@app.route(&#x27;/&#x27;, methods=[&#x27;GET&#x27;, &#x27;POST&#x27;])
+def index():
+    name = &quot;&quot;
+    img_individual = None
+    img_mother = None
+    img_father = None
+    img_growing_up = None
+    img_children = []
+    children = []
+
+    if request.method == &#x27;POST&#x27;:
+        name = request.form[&#x27;name&#x27;]
+        age = int(request.form[&#x27;age&#x27;])
+        sex = request.form[&#x27;sex&#x27;]
+        mother_alive = request.form.get(&#x27;mother_alive&#x27;)
+        mother_age = int(request.form[&#x27;mother_age&#x27;]) if mother_alive == &#x27;yes&#x27; else None
+        father_alive = request.form.get(&#x27;father_alive&#x27;)
+        father_age = int(request.form[&#x27;father_age&#x27;]) if father_alive == &#x27;yes&#x27; else None
+        has_children = request.form.get(&#x27;has_children&#x27;)
+        if has_children == &#x27;yes&#x27;:
+            child_ages = request.form.getlist(&#x27;child_age&#x27;)
+            child_sexes = request.form.getlist(&#x27;child_sex&#x27;)
+            children = [(int(age), sex) for age, sex in zip(child_ages, child_sexes)]
+
+        # Plotting based on the captured data
+        life_expectancy = 80  # Assuming a life expectancy value for example
+
+        # Generate individual plot
+        if sex == &#x27;M&#x27;:
+            life_expectancy = 79
+            img_individual = plot_to_base64(individual, name, age, sex, life_expectancy)
+        else:
+            life_expectancy = 81
+            img_individual = plot_to_base64(individual, name, age, sex, life_expectancy)
+
+        # Generate parent plots
+        if mother_alive == &#x27;yes&#x27;:
+            img_mother = plot_to_base64(parent, &quot;Mother&quot;, mother_age, &#x27;F&#x27;, life_expectancy)
+        if father_alive == &#x27;yes&#x27;:
+            img_father = plot_to_base64(parent, &quot;Father&quot;, father_age, &#x27;M&#x27;, life_expectancy)
+
+        # Generate growing up plot
+        img_growing_up = plot_to_base64(growing_up, age)
+
+        # Generate children plots
+        for child_age, child_sex in children:
+            img_child = plot_to_base64(child, child_age, child_sex)
+            img_children.append(img_child)
+
+    return render_template_string(html_template, name=name, img_individual=img_individual, img_mother=img_mother, img_father=img_father, img_growing_up=img_growing_up, img_children=img_children)
+
+def plot_to_base64(func, *args):
+    img = io.BytesIO()
+    func(*args)
+    plt.savefig(img, format=&#x27;png&#x27;)
+    plt.close()
+    img.seek(0)
+    return base64.b64encode(img.getvalue()).decode()
+
+html_template = &#x27;&#x27;&#x27;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;You&lt;/title&gt;
+    &lt;script&gt;
+        let childCount = 0;
+        
+        function toggleMotherAge(value) {
+            document.getElementById(&#x27;mother_age_div&#x27;).style.display = value === &#x27;yes&#x27; ? &#x27;block&#x27; : &#x27;none&#x27;;
+        }
+        
+        function toggleFatherAge(value) {
+            document.getElementById(&#x27;father_age_div&#x27;).style.display = value === &#x27;yes&#x27; ? &#x27;block&#x27; : &#x27;none&#x27;;
+        }
+        
+        function toggleChildren(value) {
+            document.getElementById(&#x27;children_div&#x27;).style.display = value === &#x27;yes&#x27; ? &#x27;block&#x27; : &#x27;none&#x27;;
+        }
+        
+        function addChild() {
+            childCount++;
+            const childDiv = document.createElement(&#x27;div&#x27;);
+            childDiv.id = &#x27;child_div_&#x27; + childCount;
+            childDiv.innerHTML = `
+                &lt;label for=&quot;child_age_${childCount}&quot;&gt;Child ${childCount} Age:&lt;/label&gt;
+                &lt;input type=&quot;number&quot; id=&quot;child_age_${childCount}&quot; name=&quot;child_age&quot;&gt;&lt;br&gt;&lt;br&gt;
+                &lt;label for=&quot;child_sex_${childCount}&quot;&gt;Child ${childCount} Sex:&lt;/label&gt;
+                &lt;select id=&quot;child_sex_${childCount}&quot; name=&quot;child_sex&quot;&gt;
+                    &lt;option value=&quot;M&quot;&gt;Male&lt;/option&gt;
+                    &lt;option value=&quot;F&quot;&gt;Female&lt;/option&gt;
+                &lt;/select&gt;&lt;br&gt;&lt;br&gt;
+            `;
+            document.getElementById(&#x27;add_child_button&#x27;).insertAdjacentElement(&#x27;beforebegin&#x27;, childDiv);
+        }
+    &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Your life&lt;/h1&gt;
+    &lt;form method=&quot;post&quot;&gt;
+        &lt;label for=&quot;name&quot;&gt;Name:&lt;/label&gt;
+        &lt;input type=&quot;text&quot; id=&quot;name&quot; name=&quot;name&quot; required&gt;&lt;br&gt;&lt;br&gt;
+
+        &lt;label for=&quot;age&quot;&gt;Age:&lt;/label&gt;
+        &lt;input type=&quot;number&quot; id=&quot;age&quot; name=&quot;age&quot; required&gt;&lt;br&gt;&lt;br&gt;
+        
+        &lt;label for=&quot;sex&quot;&gt;Sex:&lt;/label&gt;
+        &lt;select id=&quot;sex&quot; name=&quot;sex&quot;&gt;
+            &lt;option value=&quot;M&quot;&gt;Male&lt;/option&gt;
+            &lt;option value=&quot;F&quot;&gt;Female&lt;/option&gt;
+        &lt;/select&gt;&lt;br&gt;&lt;br&gt;
+        
+        &lt;label for=&quot;mother_alive&quot;&gt;Is your mother alive?&lt;/label&gt;
+        &lt;select id=&quot;mother_alive&quot; name=&quot;mother_alive&quot; onchange=&quot;toggleMotherAge(this.value)&quot;&gt;
+            &lt;option value=&quot;no&quot;&gt;No&lt;/option&gt;
+            &lt;option value=&quot;yes&quot;&gt;Yes&lt;/option&gt;
+        &lt;/select&gt;&lt;br&gt;&lt;br&gt;
+        
+        &lt;div id=&quot;mother_age_div&quot; style=&quot;display:none;&quot;&gt;
+            &lt;label for=&quot;mother_age&quot;&gt;Mother&#x27;s Age:&lt;/label&gt;
+            &lt;input type=&quot;number&quot; id=&quot;mother_age&quot; name=&quot;mother_age&quot;&gt;&lt;br&gt;&lt;br&gt;
+        &lt;/div&gt;
+        
+        &lt;label for=&quot;father_alive&quot;&gt;Is your father alive?&lt;/label&gt;
+        &lt;select id=&quot;father_alive&quot; name=&quot;father_alive&quot; onchange=&quot;toggleFatherAge(this.value)&quot;&gt;
+            &lt;option value=&quot;no&quot;&gt;No&lt;/option&gt;
+            &lt;option value=&quot;yes&quot;&gt;Yes&lt;/option&gt;
+        &lt;/select&gt;&lt;br&gt;&lt;br&gt;
+        
+        &lt;div id=&quot;father_age_div&quot; style=&quot;display:none;&quot;&gt;
+            &lt;label for=&quot;father_age&quot;&gt;Father&#x27;s Age:&lt;/label&gt;
+            &lt;input type=&quot;number&quot; id=&quot;father_age&quot; name=&quot;father_age&quot;&gt;&lt;br&gt;&lt;br&gt;
+        &lt;/div&gt;
+        
+        &lt;label for=&quot;has_children&quot;&gt;Do you have children?&lt;/label&gt;
+        &lt;select id=&quot;has_children&quot; name=&quot;has_children&quot; onchange=&quot;toggleChildren(this.value)&quot;&gt;
+            &lt;option value=&quot;no&quot;&gt;No&lt;/option&gt;
+            &lt;option value=&quot;yes&quot;&gt;Yes&lt;/option&gt;
+        &lt;/select&gt;&lt;br&gt;&lt;br&gt;
+        
+        &lt;div id=&quot;children_div&quot; style=&quot;display:none;&quot;&gt;
+            &lt;div id=&quot;children_entries&quot;&gt;&lt;/div&gt;
+            &lt;button type=&quot;button&quot; id=&quot;add_child_button&quot; onclick=&quot;addChild()&quot;&gt;Add Child&lt;/button&gt;&lt;br&gt;&lt;br&gt;
+        &lt;/div&gt;
+        
+        &lt;input type=&quot;submit&quot; value=&quot;Submit&quot;&gt;
+    &lt;/form&gt;
+
+    {% if img_individual %}
+    &lt;h2&gt;You&lt;/h2&gt;
+    &lt;img src=&quot;data:image/png;base64,{{ img_individual }}&quot; alt=&quot;{{ name }}&#x27;s Plot&quot;&gt;&lt;br&gt;
+    {% endif %}
+
+    {% if img_mother %}
+    &lt;h2&gt;Your mother&lt;/h2&gt;
+    &lt;img src=&quot;data:image/png;base64,{{ img_mother }}&quot; alt=&quot;Mother&#x27;s Plot&quot;&gt;&lt;br&gt;
+    {% endif %}
+
+    {% if img_father %}
+    &lt;h2&gt;Your father&lt;/h2&gt;
+    &lt;img src=&quot;data:image/png;base64,{{ img_father }}&quot; alt=&quot;Father&#x27;s Plot&quot;&gt;&lt;br&gt;
+    {% endif %}
+
+    {% if img_mother or img_father %}
+        {% if img_growing_up %}
+        &lt;h2&gt;Growing up&lt;/h2&gt;
+        &lt;img src=&quot;data:image/png;base64,{{ img_growing_up }}&quot; alt=&quot;Growing Up Plot&quot;&gt;&lt;br&gt;
+        {% endif %}
+    {% endif %}
+    
+    {% for img_child in img_children %}
+    &lt;h2&gt;Your child&lt;/h2&gt;
+    &lt;img src=&quot;data:image/png;base64,{{ img_child }}&quot; alt=&quot;Child Plot&quot;&gt;&lt;br&gt;
+    {% endfor %}
+&lt;/body&gt;
+&lt;/html&gt;
+&#x27;&#x27;&#x27;
+
+def individual(name, age, sex, life_expectancy):
+    grid_data = np.zeros((10, 10))
+    grid_data.ravel()[:age] = 1
+    grid_data.ravel()[age:life_expectancy] = 2
+
+    palette = {0: &quot;white&quot;, 1: &quot;blue&quot;, 2: &quot;gray&quot;} if sex == &#x27;M&#x27; else {0: &quot;white&quot;, 1: &quot;pink&quot;, 2: &quot;gray&quot;}
+    grid_colors = sns.color_palette([palette[x] for x in np.unique(grid_data)])
+
+    plt.figure(figsize=(7, 7))
+    sns.heatmap(grid_data, cmap=grid_colors, linewidths=1, linecolor=&#x27;black&#x27;, cbar=False, square=True, xticklabels=False, yticklabels=False)
+    #plt.title(f&quot;{name}&#x27;s Plot&quot;)
+
+def parent(name, age, sex, life_expectancy):
+    grid_data = np.zeros((10, 10))
+    grid_data.ravel()[:age] = 1
+    grid_data.ravel()[age:life_expectancy] = 2
+
+    palette = {0: &quot;white&quot;, 1: &quot;blue&quot;, 2: &quot;lightblue&quot;} if sex == &#x27;M&#x27; else {0: &quot;white&quot;, 1: &quot;red&quot;, 2: &quot;lightpink&quot;}
+    grid_colors = sns.color_palette([palette[x] for x in np.unique(grid_data)])
+
+    plt.figure(figsize=(7, 7))
+    sns.heatmap(grid_data, cmap=grid_colors, linewidths=1, linecolor=&#x27;black&#x27;, cbar=False, square=True, xticklabels=False, yticklabels=False)
+    #plt.title(f&quot;{name}&#x27;s Plot&quot;)
+
+def growing_up(age, visit_parents_weeks=4):
+    height = age + 1
+    width = 52
+    this_year = datetime.date.today().year
+    yob = this_year - age - 1
+
+    grid = np.zeros((height, width))
+    grid[-19 - 1:] = 1
+
+    mean = visit_parents_weeks
+    std_dev = 1
+
+    for i in range(0, age - 19):
+        random_number = np.random.normal(mean, std_dev)
+        rounded_integer = int(np.clip(np.round(random_number), 0, mean))
+        grid[i, :rounded_integer] = 1
+
+    cmap = sns.color_palette([&quot;white&quot;, &quot;grey&quot;], as_cmap=True)
+
+    plt.figure(figsize=(52/3, 45/3))
+    ax = sns.heatmap(grid, cmap=cmap, cbar=False, linewidths=1, linecolor=&#x27;black&#x27;)
+    ax.set_yticks(np.arange(height + 1))
+    ax.set_yticklabels(reversed(range(yob, yob + height + 1)), rotation=0)
+    ax.set_xticks([])
+
+def child(age, sex, leave_home=18):
+    grid_data = np.zeros((10, 10))
+    grid_data.ravel()[:age] = 1
+    grid_data.ravel()[age:leave_home] = 2
+
+    palette = {0: &quot;white&quot;, 1: &quot;blue&quot;, 2: &quot;lightblue&quot;} if sex == &#x27;M&#x27; else {0: &quot;white&quot;, 1: &quot;red&quot;, 2: &quot;lightpink&quot;}
+    grid_colors = sns.color_palette([palette[x] for x in np.unique(grid_data)])
+
+    plt.figure(figsize=(7, 7))
+    sns.heatmap(grid_data, cmap=grid_colors, linewidths=1, linecolor=&#x27;black&#x27;, cbar=False, square=True, xticklabels=False, yticklabels=False)
+
+if __name__ == &#x27;__main__&#x27;:
+    #app.run(debug=True)
+    app.run(host=&#x27;0.0.0.0&#x27;, port=5000)
+</pre>
+    </main>
+  </body>
+</html>
