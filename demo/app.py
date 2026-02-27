@@ -1,15 +1,12 @@
-from flask import Flask, send_from_directory
-
-# Local development entrypoint only.
-# GitHub Pages cannot execute Flask/Python apps; it can only serve static files.
-# Deploy index.html (and related static assets) to Pages instead.
-app = Flask(__name__, static_folder='.', static_url_path='')
+#!/usr/bin/env python3
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 
-@app.route('/')
-def index():
-    return send_from_directory('.', 'index.html')
+class Handler(SimpleHTTPRequestHandler):
+    """Serve static files from this directory for local preview."""
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    server = HTTPServer(('0.0.0.0', 5000), Handler)
+    print('Serving static files at http://0.0.0.0:5000')
+    server.serve_forever()
