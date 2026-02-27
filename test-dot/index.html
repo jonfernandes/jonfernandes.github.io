@@ -88,18 +88,24 @@
 
     .plots {
       margin-top: 24px;
-      height: 100dvh;
-      overflow-y: auto;
       scroll-snap-type: y mandatory;
-      scroll-behavior: smooth;
-      border-radius: 12px;
     }
 
     canvas {
       width: min(90vw, 920px);
       max-width: 100%;
-      max-height: 72dvh;
+      max-height: 70svh;
       height: auto;
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+      padding-bottom: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 420px;
       border: 1px solid var(--line);
       background: #fff;
       image-rendering: pixelated;
@@ -112,10 +118,11 @@
       gap: 12px;
       align-items: center;
       justify-content: center;
-      min-height: 100dvh;
-      padding: 24px 12px;
+      min-height: 100svh;
       scroll-snap-align: start;
       scroll-snap-stop: always;
+      gap: 10px;
+      align-items: center;
     }
 
     .plot-card h2 {
