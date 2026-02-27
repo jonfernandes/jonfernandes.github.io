@@ -96,6 +96,16 @@
       max-width: 100%;
       max-height: 70svh;
       height: auto;
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+      padding-bottom: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 420px;
       border: 1px solid var(--line);
       background: #fff;
       image-rendering: pixelated;
@@ -111,6 +121,8 @@
       min-height: 100svh;
       scroll-snap-align: start;
       scroll-snap-stop: always;
+      gap: 10px;
+      align-items: center;
     }
 
     .plot-card h2 {
