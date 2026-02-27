@@ -1,15 +1,21 @@
-from flask import Flask, send_from_directory
+"""Local preview server for the static Dot page.
 
-# Local development entrypoint only.
-# GitHub Pages cannot execute Flask/Python apps; it can only serve static files.
-# Deploy index.html (and related static assets) to Pages instead.
-app = Flask(__name__, static_folder='.', static_url_path='')
+This replaces the previous Flask-based entrypoint with Python's built-in
+HTTP server so the UI remains pure HTML/CSS/JS.
+"""
 
-
-@app.route('/')
-def index():
-    return send_from_directory('.', 'index.html')
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+def run() -> None:
+    root = Path(__file__).parent
+    handler = lambda *args, **kwargs: SimpleHTTPRequestHandler(*args, directory=str(root), **kwargs)
+    server = ThreadingHTTPServer(("0.0.0.0", 5000), handler)
+    print("Serving static files from", root)
+    print("Open http://127.0.0.1:5000/index.html")
+    server.serve_forever()
+
+
+if __name__ == "__main__":
+    run()
