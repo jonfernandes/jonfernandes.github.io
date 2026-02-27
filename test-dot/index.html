@@ -87,6 +87,15 @@
     .row { display: flex; gap: 8px; }
 
     .plots {
+      margin-top: 24px;
+      scroll-snap-type: y mandatory;
+    }
+
+    canvas {
+      width: min(90vw, 920px);
+      max-width: 100%;
+      max-height: 70svh;
+      height: auto;
       display: grid;
       gap: 16px;
       margin-top: 24px;
@@ -106,6 +115,12 @@
     .plot-card {
       display: flex;
       flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      min-height: 100svh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
       gap: 10px;
       align-items: center;
     }
