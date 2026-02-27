@@ -1,161 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dot Gallery</title>
-  <style>
-    :root {
-      --bg: #0e1014;
-      --fg: #f5f7ff;
-      --muted: #c3c9dc;
-      --overlay: rgba(5, 7, 12, 0.34);
-      --accent: #84d2ff;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      height: 100%;
-      background: var(--bg);
-      color: var(--fg);
-      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-      scroll-snap-type: y mandatory;
-      overflow-y: auto;
-    }
-
-    .panel {
-      position: relative;
-      height: 100vh;
-      width: 100%;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-      overflow: hidden;
-      display: grid;
-      place-items: end start;
-      isolation: isolate;
-    }
-
-    .panel img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -2;
-    }
-
-    .panel::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background:
-        linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.72) 100%),
-        var(--overlay);
-    }
-
-    .caption {
-      max-width: min(42rem, 90vw);
-      margin: 0 0 8vh 6vw;
-      padding: 1rem 1.25rem;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 0.65rem;
-      background: rgba(10, 14, 23, 0.42);
-      backdrop-filter: blur(4px);
-    }
-
-    .caption h2 {
-      margin: 0;
-      font-size: clamp(1.4rem, 2.3vw, 2.1rem);
-      letter-spacing: 0.03em;
-    }
-
-    .caption p {
-      margin: 0.45rem 0 0;
-      font-size: clamp(0.95rem, 1.2vw, 1.1rem);
-      color: var(--muted);
-    }
-
-    .hint {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 10;
-      padding: 0.45rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(132, 210, 255, 0.5);
-      color: var(--accent);
-      font-size: 0.8rem;
-      background: rgba(8, 11, 17, 0.72);
-    }
-
-    @media (max-width: 720px) {
-      .caption {
-        margin: 0 0 5vh 4vw;
-        max-width: 92vw;
-      }
-
-      .hint {
-        right: 0.5rem;
-        top: 0.5rem;
-      }
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dot Static Page</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="hint">One image per screen</div>
-
-  <section class="panel">
-    <img src="../images/JF-color.jpg" alt="Portrait in color" loading="eager" />
-    <div class="caption">
-      <h2>JF Color</h2>
-      <p>Full-screen image section 1 of 6.</p>
-    </div>
-  </section>
-
-  <section class="panel">
-    <img src="../images/JF-bw.png" alt="Black and white portrait" loading="lazy" />
-    <div class="caption">
-      <h2>JF Black and White</h2>
-      <p>Each section is exactly one viewport tall.</p>
-    </div>
-  </section>
-
-  <section class="panel">
-    <img src="../images/noah2.jpg" alt="Noah portrait" loading="lazy" />
-    <div class="caption">
-      <h2>Noah</h2>
-      <p>Scroll snapping keeps one image on screen at a time.</p>
-    </div>
-  </section>
-
-  <section class="panel">
-    <img src="../images/yael2.jpg" alt="Yael portrait" loading="lazy" />
-    <div class="caption">
-      <h2>Yael</h2>
-      <p>Designed for static hosting on GitHub Pages.</p>
-    </div>
-  </section>
-
-  <section class="panel">
-    <img src="../images/noel.jpg" alt="Noel portrait" loading="lazy" />
-    <div class="caption">
-      <h2>Noel</h2>
-      <p>No Flask runtime required.</p>
-    </div>
-  </section>
-
-  <section class="panel">
-    <img src="../images/boat.png" alt="Boat on water" loading="lazy" />
-    <div class="caption">
-      <h2>Boat</h2>
-      <p>Static HTML + CSS replacement for the Flask route output.</p>
-    </div>
-  </section>
+  <main class="wrap">
+    <section class="card">
+      <h1>Static Equivalent of dot/app.py</h1>
+      <p>
+        The Flask app in <code>dot/app.py</code> serves <code>index.html</code> at
+        the root route (<code>/</code>). GitHub Pages cannot run Flask, so this
+        static page is the equivalent output.
+      </p>
+      <div class="meta">
+        <span>Route equivalent: <code>/</code></span>
+        <span>Runtime: Static HTML + CSS</span>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
