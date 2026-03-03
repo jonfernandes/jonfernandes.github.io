@@ -53,6 +53,14 @@ const format = {
       day: "numeric",
     });
   },
+  startTime(value) {
+    if (!value) return "—";
+    const date = new Date(value);
+    return date.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  },
   pace(secondsPerMeter) {
     if (!Number.isFinite(secondsPerMeter)) return "—";
     const secondsPerUnit = state.unit === "mi" ? secondsPerMeter * 1609.344 : secondsPerMeter * 1000;
@@ -158,8 +166,9 @@ function createCard(activity) {
       </div>
       <span class="card__badge">${format.date(activity.startDate)}</span>
     </div>
-    <div class="card__meta">${activity.location || "Location hidden"}</div>
+    <div class="card__meta">${activity.location || "Location hidden"} · ${format.startTime(activity.startDate)}</div>
     <div class="card__stats">
+      <span><strong>Start</strong><span>${format.startTime(activity.startDate)}</span></span>
       <span><strong>Distance</strong><span>${format.distance(activity.distance)}</span></span>
       <span><strong>Moving</strong><span>${format.time(activity.moving)}</span></span>
       <span><strong>Elevation</strong><span>${format.elevation(activity.elevation)}</span></span>
