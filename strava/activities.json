@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-03T15:36:21.347Z",
+  "generated_at": "2026-03-03T16:32:38.984Z",
   "activities": [
     {
       "resource_state": 2,
@@ -7,7 +7,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Evening Workout",
+      "name": "Piano",
       "distance": 0,
       "moving_time": 2420,
       "elapsed_time": 2420,
@@ -126,7 +126,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Afternoon Workout",
+      "name": "Piano",
       "distance": 0,
       "moving_time": 691,
       "elapsed_time": 691,
@@ -316,7 +316,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Morning Workout",
+      "name": "Deep Work",
       "distance": 1112.8,
       "moving_time": 1755,
       "elapsed_time": 4684,
@@ -631,7 +631,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Afternoon Workout",
+      "name": "Trumpet",
       "distance": 259.4,
       "moving_time": 498,
       "elapsed_time": 995,
@@ -1126,7 +1126,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Evening Workout",
+      "name": "Piano",
       "distance": 0,
       "moving_time": 1006,
       "elapsed_time": 1006,
@@ -1432,7 +1432,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Afternoon Workout",
+      "name": "Trumpet",
       "distance": 0,
       "moving_time": 2230,
       "elapsed_time": 2230,
@@ -1615,7 +1615,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Evening Workout",
+      "name": "Piano",
       "distance": 0,
       "moving_time": 3839,
       "elapsed_time": 3839,
@@ -1983,7 +1983,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Afternoon Workout",
+      "name": "Trumpet",
       "distance": 626.3,
       "moving_time": 924,
       "elapsed_time": 3332,
@@ -2172,7 +2172,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Evening Workout",
+      "name": "Piano",
       "distance": 0,
       "moving_time": 4291,
       "elapsed_time": 4291,
@@ -2290,7 +2290,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Afternoon Workout",
+      "name": "Trumpet",
       "distance": 0,
       "moving_time": 2907,
       "elapsed_time": 2907,
@@ -2472,7 +2472,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Afternoon Workout",
+      "name": "Trumpet",
       "distance": 212.4,
       "moving_time": 178,
       "elapsed_time": 2886,
@@ -2852,7 +2852,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Evening Workout",
+      "name": "Piano",
       "distance": 0,
       "moving_time": 2518,
       "elapsed_time": 2518,
@@ -3102,7 +3102,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Lunch Workout",
+      "name": "Deep Work",
       "distance": 641.6,
       "moving_time": 1085,
       "elapsed_time": 2225,
