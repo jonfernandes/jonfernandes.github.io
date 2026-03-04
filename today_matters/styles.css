@@ -1,0 +1,227 @@
+:root {
+  --bg: #eef1f7;
+  --panel: #ffffff;
+  --ink: #142033;
+  --muted: #52607b;
+  --line: #d8dfeb;
+  --calendar: #2f6bff;
+  --strava: #fc4c02;
+  --today: #0f9960;
+  --chip-bg: #f4f7ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at 10% 10%, #ffffff 0%, var(--bg) 55%);
+}
+
+.page {
+  height: 100vh;
+  padding: 14px;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 10px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 {
+  margin: 2px 0 0;
+  font-size: 1.45rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font: 500 0.78rem "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.meta p {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: 500 0.84rem "Space Grotesk", sans-serif;
+  cursor: pointer;
+}
+
+.board {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+}
+
+.board-head {
+  display: grid;
+  grid-template-columns: 0.7fr 1.65fr 1.65fr;
+  background: #f6f8fd;
+  border-bottom: 1px solid var(--line);
+  font: 600 0.8rem "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+  color: #34425f;
+}
+
+.board-head > div {
+  padding: 9px 10px;
+}
+
+.week-grid {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.day-row {
+  display: grid;
+  grid-template-columns: 0.7fr 1.65fr 1.65fr;
+  border-bottom: 1px solid var(--line);
+  min-height: calc((100vh - 170px) / 7);
+}
+
+.day-row:last-child {
+  border-bottom: 0;
+}
+
+.day-cell,
+.col-cell {
+  padding: 8px 10px;
+  min-width: 0;
+}
+
+.day-cell {
+  border-right: 1px solid var(--line);
+  display: grid;
+  align-content: center;
+  gap: 2px;
+}
+
+.day-name {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.day-date {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.day-cell.today .day-name {
+  color: var(--today);
+}
+
+.col-cell {
+  border-right: 1px solid var(--line);
+  overflow: auto;
+}
+
+.day-row > .col-cell:last-child {
+  border-right: 0;
+}
+
+.list {
+  display: grid;
+  gap: 6px;
+}
+
+.item {
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: #fff;
+}
+
+.item.calendar {
+  border-left-color: var(--calendar);
+  background: var(--chip-bg);
+}
+
+.item.strava {
+  border-left-color: var(--strava);
+}
+
+.item-title {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.item-meta {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.empty {
+  color: #8492ab;
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .page {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .board-head,
+  .day-row {
+    grid-template-columns: 1fr;
+  }
+
+  .board-head > div:not(:first-child) {
+    display: none;
+  }
+
+  .day-cell,
+  .col-cell {
+    border-right: 0;
+  }
+
+  .day-cell {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .day-row {
+    min-height: auto;
+  }
+}

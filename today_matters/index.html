@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Today Matters</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">today_matters</p>
+          <h1>Plan vs Done</h1>
+        </div>
+        <div class="actions">
+          <button id="prevWeek" class="btn" type="button">Prev</button>
+          <button id="thisWeek" class="btn" type="button">This Week</button>
+          <button id="nextWeek" class="btn" type="button">Next</button>
+        </div>
+      </header>
+
+      <section class="meta">
+        <p id="weekLabel">Loading week...</p>
+        <p id="status">Loading calendar and Strava data...</p>
+      </section>
+
+      <section class="board">
+        <div class="board-head">
+          <div>Day</div>
+          <div>Planned (Calendar)</div>
+          <div>Done (Strava)</div>
+        </div>
+        <div id="weekGrid" class="week-grid" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
