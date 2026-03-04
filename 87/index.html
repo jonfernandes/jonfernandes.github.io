@@ -997,7 +997,9 @@ async function analyzeWithAI() {
     });
     const data = await resp.json();
     if (data.error) throw new Error(data.error.message);
-    const text = data.content[0].text.trim();
+    // Strip markdown code fences if present (e.g. ```json ... ```)
+    let text = data.content[0].text.trim();
+    text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     const result = JSON.parse(text);
     aiDetectedFoods = result.foods;
     renderAIResult(result);
