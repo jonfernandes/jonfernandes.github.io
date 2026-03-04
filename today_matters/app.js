@@ -1,10 +1,10 @@
+const IST_TIMEZONE = "Asia/Kolkata";
+
 const state = {
   weekStartKey: startOfWeekKey(istDateKey(new Date())),
   calendarEvents: [],
   stravaActivities: [],
 };
-
-const IST_TIMEZONE = "Asia/Kolkata";
 
 const elements = {
   weekGrid: document.getElementById("weekGrid"),
