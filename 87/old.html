@@ -480,52 +480,21 @@
 
     <div class="card">
       <div class="card-hd"><i class="fa-brands fa-strava" style="color:#FC4C02"></i> Strava Integration</div>
-      <div id="strava-connected-status" style="display:none;margin-bottom:12px">
-        <span class="badge badge-green">✅ Connected</span>
-        <span id="strava-connected-name" style="font-size:.82rem;font-weight:600;margin-left:6px"></span>
-        <button class="btn btn-danger btn-sm" style="float:right" onclick="disconnectStrava()">Disconnect</button>
+      <p style="font-size:.8rem;color:var(--g500);margin-bottom:12px;line-height:1.6">Paste your Strava Access Token below. You can find this at <strong>strava.com/settings/api</strong> → "Your Access Token". For activity access, authorise your app with the <code>activity:read_all</code> scope.</p>
+      <div class="fg">
+        <label class="flbl">Strava Access Token</label>
+        <input class="finput" id="strava-token-input" type="password" placeholder="Paste token here...">
       </div>
-
-      <p style="font-size:.8rem;color:var(--g500);margin-bottom:12px;line-height:1.6">
-        Enter your Strava API credentials to authorize with full <code>activity:read_all</code> scope.
-        Find these at <a href="https://www.strava.com/settings/api" target="_blank" style="color:var(--blue)">strava.com/settings/api</a>.
-      </p>
-      <div class="row2">
-        <div class="fg">
-          <label class="flbl">Client ID</label>
-          <input class="finput" id="strava-client-id" type="text" placeholder="e.g. 12345">
-        </div>
-        <div class="fg">
-          <label class="flbl">Client Secret</label>
-          <input class="finput" id="strava-client-secret" type="password" placeholder="Paste secret...">
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-strava" onclick="saveAndAuthorizeStrava()"><i class="fa-brands fa-strava"></i> Authorize with Strava</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-strava btn-sm" onclick="connectStravaToken()"><i class="fa-brands fa-strava"></i> Connect</button>
         <button class="btn btn-secondary btn-sm" onclick="loadDemoActivities()"><i class="fa-solid fa-flask"></i> Demo mode</button>
       </div>
       <div class="info-box" style="margin-top:12px">
-        <strong>Setup steps:</strong><br>
+        <strong>How to get your token:</strong><br>
         1. Go to <a href="https://www.strava.com/settings/api" target="_blank">strava.com/settings/api</a><br>
-        2. Set <strong>Authorization Callback Domain</strong> to <code id="this-domain">your domain</code><br>
-        3. Copy your <strong>Client ID</strong> and <strong>Client Secret</strong> above<br>
-        4. Click <strong>Authorize with Strava</strong> — you'll be redirected to approve access<br>
-        5. You'll be sent back here automatically with activities loaded
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-hd"><i class="fa-solid fa-file-code" style="color:#FC4C02"></i> GitHub Actions Sync <span class="badge badge-orange">Recommended</span></div>
-      <p style="font-size:.8rem;color:var(--g500);margin-bottom:12px;line-height:1.6">
-        If your GitHub Actions workflow outputs a JSON file of activities to GitHub Pages, paste its URL here. The app will load it directly — no OAuth needed.
-      </p>
-      <div class="fg">
-        <label class="flbl">Activities JSON URL</label>
-        <input class="finput" id="strava-json-url" type="url" placeholder="https://jonfernandes.github.io/strava/activities.json">
-      </div>
-      <button class="btn btn-strava btn-sm" onclick="loadFromJsonUrlInput()"><i class="fa-solid fa-rotate"></i> Load activities</button>
-      <div class="info-box" style="margin-top:12px">
-        Check your workflow YAML for the output filename. Common names are <code>activities.json</code>, <code>strava.json</code>, or <code>data/activities.json</code>.
+        2. Create an app if needed (use any callback domain)<br>
+        3. The "Access Token" on that page can be used here<br>
+        4. For full activity access: authorise with <code>activity:read_all</code> scope
       </div>
     </div>
 
@@ -644,23 +613,17 @@
     <div class="modal-handle"></div>
     <div class="modal-hd" style="color:#FC4C02"><i class="fa-brands fa-strava"></i> Connect Strava</div>
     <p style="font-size:.85rem;color:var(--g500);margin-bottom:16px;line-height:1.6">
-      Enter your Strava Client ID and Secret to authorize with <code>activity:read_all</code> scope. Find these at <a href="https://www.strava.com/settings/api" target="_blank" style="color:var(--blue)">strava.com/settings/api</a>.
+      Paste your Strava Access Token to sync your workouts. For the best experience, use a token with <code>activity:read_all</code> scope.
     </p>
-    <div class="row2">
-      <div class="fg">
-        <label class="flbl">Client ID</label>
-        <input class="finput" id="strava-client-id-modal" type="text" placeholder="e.g. 12345">
-      </div>
-      <div class="fg">
-        <label class="flbl">Client Secret</label>
-        <input class="finput" id="strava-client-secret-modal" type="password" placeholder="Paste secret...">
-      </div>
+    <div class="fg">
+      <label class="flbl">Strava Access Token</label>
+      <input class="finput" id="strava-token-modal" type="password" placeholder="Paste your access token...">
     </div>
-    <button class="btn btn-strava btn-full" onclick="saveAndAuthorizeStravaFromModal()">
-      <i class="fa-brands fa-strava"></i> Authorize with Strava
-    </button>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-strava btn-full" onclick="connectStravaFromModal()"><i class="fa-brands fa-strava"></i> Connect</button>
+    </div>
     <div class="info-box" style="margin-top:12px">
-      Make sure your Strava app's <strong>Authorization Callback Domain</strong> is set to <code id="this-domain-modal">your domain</code>
+      <strong>Get your token:</strong> Go to <a href="https://www.strava.com/settings/api" target="_blank">strava.com/settings/api</a> and copy the Access Token shown there.
     </div>
     <div class="divider">or</div>
     <button class="btn btn-secondary btn-full" onclick="loadDemoActivities(); closeStravaModal()">
@@ -679,9 +642,6 @@ let state = {
   activities: [],  // { id, name, type, date, distance, movingTime, calories }
   weights: [],     // { date, weight }
   stravaToken: null,
-  stravaClientId: null,
-  stravaClientSecret: null,
-  stravaJsonUrl: null,
   claudeKey: null,
   isDemo: false
 };
@@ -1037,7 +997,9 @@ async function analyzeWithAI() {
     });
     const data = await resp.json();
     if (data.error) throw new Error(data.error.message);
-    const text = data.content[0].text.trim();
+    // Strip markdown code fences if present (e.g. ```json ... ```)
+    let text = data.content[0].text.trim();
+    text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     const result = JSON.parse(text);
     aiDetectedFoods = result.foods;
     renderAIResult(result);
@@ -1186,121 +1148,17 @@ function fmtActivity(a) {
 function showStravaConnect() { document.getElementById('strava-modal').classList.add('show'); }
 function closeStravaModal() { document.getElementById('strava-modal').classList.remove('show'); }
 
-// ── OAUTH FLOW ──
-function getRedirectUri() {
-  return window.location.origin + window.location.pathname;
-}
-
-function saveAndAuthorizeStrava() {
-  const clientId = document.getElementById('strava-client-id').value.trim();
-  const secret = document.getElementById('strava-client-secret').value.trim();
-  if (!clientId || !secret) { showToast('Please enter Client ID and Client Secret'); return; }
-  state.stravaClientId = clientId;
-  state.stravaClientSecret = secret;
-  save();
-  startStravaOAuth();
-}
-
-function saveAndAuthorizeStravaFromModal() {
-  const clientId = document.getElementById('strava-client-id-modal').value.trim();
-  const secret = document.getElementById('strava-client-secret-modal').value.trim();
-  if (!clientId || !secret) { showToast('Please enter Client ID and Client Secret'); return; }
-  state.stravaClientId = clientId;
-  state.stravaClientSecret = secret;
-  save();
+function connectStravaFromModal() {
+  const token = document.getElementById('strava-token-modal').value.trim();
+  if (!token) { showToast('Please paste your Strava token'); return; }
   closeStravaModal();
-  startStravaOAuth();
+  connectWithToken(token);
 }
 
-function startStravaOAuth() {
-  const redirectUri = encodeURIComponent(getRedirectUri());
-  const url = `https://www.strava.com/oauth/authorize?client_id=${state.stravaClientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=read,activity:read_all`;
-  window.location.href = url;
-}
-
-async function handleOAuthCallback() {
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
-  const error = params.get('error');
-  if (error) {
-    showToast('❌ Strava authorization denied');
-    window.history.replaceState({}, '', window.location.pathname);
-    return;
-  }
-  if (!code || !state.stravaClientId || !state.stravaClientSecret) return;
-
-  // Clean URL immediately
-  window.history.replaceState({}, '', window.location.pathname);
-  showToast('🔄 Connecting to Strava...');
-
-  try {
-    const r = await fetch('https://www.strava.com/oauth/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        client_id: state.stravaClientId,
-        client_secret: state.stravaClientSecret,
-        code,
-        grant_type: 'authorization_code'
-      })
-    });
-    const data = await r.json();
-    if (!r.ok || data.errors) throw new Error(data.message || 'Token exchange failed');
-
-    state.stravaToken = data.access_token;
-    state.isDemo = false;
-    save();
-
-    const athlete = data.athlete || {};
-    document.getElementById('strava-athlete-name').textContent =
-      `${athlete.firstname || ''} ${athlete.lastname || ''}`.trim() || 'Strava Athlete';
-    document.getElementById('strava-athlete-sub').textContent =
-      `${athlete.city || ''} ${athlete.country || ''}`.trim() || 'Connected via OAuth';
-    showStravaConnectedUI();
-    await fetchStravaActivities();
-    showToast(`✅ Connected as ${athlete.firstname || 'Athlete'}!`);
-  } catch(e) {
-    showToast('❌ ' + (e.message || 'Auth failed. Check your Client ID and Secret.'));
-  }
-}
-
-// ── LOAD FROM PRE-SYNCED JSON (GitHub Actions) ──
-async function loadFromSyncedJson(url) {
-  if (!url) return;
-  showToast('🔄 Loading from synced data...');
-  try {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const data = await r.json();
-
-    // Handle various common formats
-    const rawActivities = Array.isArray(data) ? data
-      : data.activities ? data.activities
-      : data.data ? data.data
-      : [];
-
-    if (!rawActivities.length) { showToast('⚠️ No activities found in JSON'); return; }
-
-    state.activities = rawActivities.map(a => ({
-      id: String(a.id || a.activity_id || Math.random()),
-      name: a.name || a.activity_name || 'Activity',
-      type: a.type || a.sport_type || a.activity_type || 'Other',
-      date: a.start_date || a.date || a.start_date_local || new Date().toISOString(),
-      distance: a.distance || 0,
-      movingTime: a.moving_time || a.elapsed_time || 0,
-      calories: (a.calories > 0) ? a.calories : (a.kilojoules > 0) ? Math.round(a.kilojoules * 0.239) : estimateCalories(a)
-    }));
-
-    state.isDemo = false;
-    save();
-    document.getElementById('strava-athlete-name').textContent = 'Strava (via sync)';
-    document.getElementById('strava-athlete-sub').textContent = `${state.activities.length} activities loaded`;
-    showStravaConnectedUI();
-    renderActivities(); renderDashboard();
-    showToast(`✅ Loaded ${state.activities.length} activities`);
-  } catch(e) {
-    showToast('❌ Could not load: ' + e.message);
-  }
+function connectStravaToken() {
+  const token = document.getElementById('strava-token-input').value.trim();
+  if (!token) { showToast('Please paste your Strava token'); return; }
+  connectWithToken(token);
 }
 
 async function connectWithToken(token) {
@@ -1331,20 +1189,8 @@ async function fetchStravaActivities() {
     const r = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=30', {
       headers: { 'Authorization': `Bearer ${state.stravaToken}` }
     });
-    if (r.status === 401) {
-      showToast('❌ Token expired or wrong scope. Use Authorize with Strava to reconnect.');
-      return;
-    }
-    if (!r.ok) {
-      const err = await r.json().catch(() => ({}));
-      showToast('❌ Strava error: ' + (err.message || r.status));
-      return;
-    }
+    if (!r.ok) return;
     const acts = await r.json();
-    if (!Array.isArray(acts)) {
-      showToast('❌ Unexpected response. Check token scope (needs activity:read_all).');
-      return;
-    }
     state.activities = acts.map(a => ({
       id: String(a.id),
       name: a.name,
@@ -1356,7 +1202,7 @@ async function fetchStravaActivities() {
     }));
     save();
     renderActivities();
-  } catch(e) { showToast('❌ Network error: ' + e.message); }
+  } catch(e) { console.error(e); }
 }
 
 function estimateCalories(a) {
@@ -1614,15 +1460,8 @@ function renderSettings() {
     ${state.stravaToken && !state.isDemo ? '<br><span class="badge badge-green">Strava connected</span>' : ''}
     ${state.claudeKey ? '<br><span class="badge badge-purple">AI analysis enabled</span>' : ''}
   `;
-  if (state.stravaClientId) document.getElementById('strava-client-id').value = state.stravaClientId;
-  if (state.stravaClientSecret) document.getElementById('strava-client-secret').value = state.stravaClientSecret;
-  if (state.stravaJsonUrl) document.getElementById('strava-json-url').value = state.stravaJsonUrl;
+  if (state.stravaToken) document.getElementById('strava-token-input').value = state.stravaToken;
   if (state.claudeKey) document.getElementById('claude-key-input').value = state.claudeKey;
-  if (state.stravaToken || state.isDemo) {
-    document.getElementById('strava-connected-status').style.display = 'block';
-    document.getElementById('strava-connected-name').textContent =
-      state.isDemo ? 'Demo mode' : 'Token active';
-  }
 }
 
 function saveClaudeKey() {
@@ -1644,26 +1483,7 @@ function resetApp() {
 // ║                    START                         ║
 // ╚══════════════════════════════════════════════════╝
 load();
-
-// Fill in domain hints
-const domainHint = window.location.hostname || 'your domain';
-document.querySelectorAll('#this-domain, #this-domain-modal').forEach(el => el.textContent = domainHint);
-
-// Handle Strava OAuth callback (?code=...)
-if (window.location.search.includes('code=') || window.location.search.includes('error=')) {
-  initApp();
-  handleOAuthCallback();
-} else {
-  initApp();
-}
-
-function loadFromJsonUrlInput() {
-  const url = document.getElementById('strava-json-url').value.trim();
-  if (!url) { showToast('Please enter a JSON URL'); return; }
-  state.stravaJsonUrl = url;
-  save();
-  loadFromSyncedJson(url);
-}
+initApp();
 </script>
 </body>
 </html>
