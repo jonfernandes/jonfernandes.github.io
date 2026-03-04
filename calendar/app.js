@@ -109,20 +109,60 @@ function renderEvents(events) {
   }
 }
 
+async function fetchIcsWithFallback(icsUrl) {
+  const rawProxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(icsUrl)}`;
+  const jsonProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`;
+  const corsProxy = `https://cors.isomorphic-git.org/${icsUrl}`;
+
+  const attempts = [
+    {
+      name: "allorigins-raw",
+      run: async () => {
+        const response = await fetch(rawProxy, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.text();
+      },
+    },
+    {
+      name: "allorigins-get",
+      run: async () => {
+        const response = await fetch(jsonProxy, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload = await response.json();
+        return payload.contents || "";
+      },
+    },
+    {
+      name: "cors-isomorphic-git",
+      run: async () => {
+        const response = await fetch(corsProxy, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.text();
+      },
+    },
+  ];
+
+  const errors = [];
+
+  for (const attempt of attempts) {
+    try {
+      const text = await attempt.run();
+      if (text.includes("BEGIN:VCALENDAR")) return text;
+      errors.push(`${attempt.name}: invalid feed response`);
+    } catch (err) {
+      errors.push(`${attempt.name}: ${err.message}`);
+    }
+  }
+
+  throw new Error(errors.join(" | "));
+}
+
 async function loadEvents() {
   statusEl.textContent = "Loading calendar events...";
   eventsEl.innerHTML = "";
 
   try {
-    const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(calendarIcsUrl(CALENDAR_ID))}`;
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Request failed: ${response.status}`);
-
-    const icsText = await response.text();
-    if (!icsText.includes("BEGIN:VCALENDAR")) {
-      throw new Error("Calendar feed was not returned.");
-    }
-
+    const icsText = await fetchIcsWithFallback(calendarIcsUrl(CALENDAR_ID));
     const events = parseIcsEvents(icsText);
     renderEvents(events);
   } catch (err) {
@@ -130,11 +170,11 @@ async function loadEvents() {
     const help = document.createElement("li");
     help.className = "event";
     help.innerHTML =
-      'Ensure the calendar is public and the ID is correct in <code>app.js</code> (current: <code>' +
+      'Confirm calendar is public in Google Calendar settings. Current ID: <code>' +
       CALENDAR_ID +
-      "</code>).";
+      "</code>.";
     eventsEl.appendChild(help);
-    console.error(err);
+    console.error("Calendar fetch failed:", err);
   }
 }
 
