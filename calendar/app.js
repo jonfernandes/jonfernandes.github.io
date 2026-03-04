@@ -7,7 +7,7 @@ const openGoogleEl = document.getElementById("open-google");
 function buildEmbedUrl(calendarId) {
   const params = new URLSearchParams({
     src: calendarId,
-    ctz: "Europe/London",
+    ctz: "Asia/Kolkata",
     mode: "AGENDA",
     showTitle: "0",
     showPrint: "0",
