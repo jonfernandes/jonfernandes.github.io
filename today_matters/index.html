@@ -17,7 +17,7 @@
       <header class="topbar">
         <div>
           <p class="eyebrow">today_matters</p>
-          <h1>Plan vs Done</h1>
+          <h1>Plan vs Done (IST)</h1>
         </div>
         <div class="actions">
           <button id="prevWeek" class="btn" type="button">Prev</button>
@@ -28,16 +28,24 @@
 
       <section class="meta">
         <p id="weekLabel">Loading week...</p>
-        <p id="status">Loading calendar and Strava data...</p>
+        <p id="status">Loading Strava data...</p>
       </section>
 
-      <section class="board">
-        <div class="board-head">
-          <div>Day</div>
-          <div>Planned (Calendar)</div>
-          <div>Done (Strava)</div>
-        </div>
-        <div id="weekGrid" class="week-grid" aria-live="polite"></div>
+      <section class="split">
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Planned (Google Calendar)</h2>
+            <a id="openGoogle" target="_blank" rel="noreferrer">Open</a>
+          </div>
+          <iframe id="calendarFrame" class="calendar-frame" title="Google Calendar week view" loading="lazy"></iframe>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Done (Strava in IST)</h2>
+          </div>
+          <div id="weekGrid" class="week-grid" aria-live="polite"></div>
+        </article>
       </section>
     </main>
 
