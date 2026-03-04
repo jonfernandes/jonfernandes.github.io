@@ -13,8 +13,6 @@ const elements = {
   prevWeek: document.getElementById("prevWeek"),
   nextWeek: document.getElementById("nextWeek"),
   thisWeek: document.getElementById("thisWeek"),
-  calendarFrame: document.getElementById("calendarFrame"),
-  openGoogle: document.getElementById("openGoogle"),
 };
 
 function keyToUtcDate(key) {
@@ -79,33 +77,25 @@ function toGoogleDate(key) {
   return key.replaceAll("-", "");
 }
 
-function formatKeyRange(startKey, endKey) {
+function formatWeekLabel(startKey, endKey) {
   const opts = { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" };
-  return `${keyToUtcDate(startKey).toLocaleDateString([], opts)} - ${keyToUtcDate(endKey).toLocaleDateString([], opts)}`;
+  return `${keyToUtcDate(startKey).toLocaleDateString([], opts)} - ${keyToUtcDate(endKey).toLocaleDateString([], opts)} (IST)`;
 }
 
-function buildCalendarEmbedUrl(startKey, endKey) {
+function buildCalendarDayEmbedUrl(dayKey) {
+  const nextDayKey = addDaysKey(dayKey, 1);
   const params = new URLSearchParams({
     src: CALENDAR_ID,
     ctz: IST_TIMEZONE,
-    mode: "WEEK",
+    mode: "AGENDA",
     showTitle: "0",
     showPrint: "0",
     showCalendars: "0",
     showTabs: "0",
-    showNav: "1",
-    dates: `${toGoogleDate(startKey)}/${toGoogleDate(endKey)}`,
+    showNav: "0",
+    dates: `${toGoogleDate(dayKey)}/${toGoogleDate(nextDayKey)}`,
   });
   return `https://calendar.google.com/calendar/embed?${params.toString()}`;
-}
-
-function buildOpenCalendarUrl(startKey, endKey) {
-  const params = new URLSearchParams({
-    ctz: IST_TIMEZONE,
-    mode: "WEEK",
-    dates: `${toGoogleDate(startKey)}/${toGoogleDate(endKey)}`,
-  });
-  return `https://calendar.google.com/calendar/u/0/r?${params.toString()}`;
 }
 
 async function fetchStrava() {
@@ -119,7 +109,6 @@ async function fetchStrava() {
       const data = await response.json();
       return Array.isArray(data?.activities) ? data.activities : [];
     } catch (_e) {
-      // try next
     } finally {
       clearTimeout(timeoutId);
     }
@@ -140,49 +129,68 @@ function stravaForDay(dayKey) {
     });
 }
 
-function renderStravaWeek() {
+function renderWeek() {
   const startKey = startOfWeekKey(state.weekStartKey);
   const endKey = addDaysKey(startKey, 6);
+  elements.weekLabel.textContent = formatWeekLabel(startKey, endKey);
 
-  elements.weekLabel.textContent = `${formatKeyRange(startKey, endKey)} (IST)`;
-  elements.calendarFrame.src = buildCalendarEmbedUrl(startKey, endKey);
-  elements.openGoogle.href = buildOpenCalendarUrl(startKey, endKey);
-
+  const todayKey = istDateKey(new Date());
   const frag = document.createDocumentFragment();
+
   for (let i = 0; i < 7; i += 1) {
     const dayKey = addDaysKey(startKey, i);
-    const card = document.createElement("article");
-    card.className = "day-card";
+    const dayDate = keyToUtcDate(dayKey);
 
-    const dayLabel = keyToUtcDate(dayKey).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
-    const items = stravaForDay(dayKey);
+    const row = document.createElement("article");
+    row.className = "day-row";
 
+    const dayCell = document.createElement("div");
+    dayCell.className = "day-cell";
+    if (dayKey === todayKey) dayCell.classList.add("today");
+    dayCell.innerHTML = `
+      <div class="day-name">${dayDate.toLocaleDateString([], { weekday: "short", timeZone: "UTC" })}</div>
+      <div class="day-date">${dayDate.toLocaleDateString([], { month: "short", day: "numeric", timeZone: "UTC" })}</div>
+    `;
+
+    const calCell = document.createElement("div");
+    calCell.className = "cal-cell";
+    const frame = document.createElement("iframe");
+    frame.className = "cal-frame";
+    frame.loading = "lazy";
+    frame.title = `Google Calendar ${dayKey}`;
+    frame.referrerPolicy = "no-referrer-when-downgrade";
+    frame.src = buildCalendarDayEmbedUrl(dayKey);
+    calCell.appendChild(frame);
+
+    const stravaCell = document.createElement("div");
+    stravaCell.className = "strava-cell";
     const list = document.createElement("div");
     list.className = "list";
 
+    const items = stravaForDay(dayKey);
     if (!items.length) {
       list.innerHTML = '<div class="empty">No completed activities</div>';
     } else {
       items.forEach((activity) => {
-        const row = document.createElement("div");
-        row.className = "item";
         const start = parseDateInput(activity.start_date_local || activity.start_date || activity.date);
         const name = activity.name || "Untitled";
         const type = activity.type || activity.sport_type || "Workout";
         const distance = Number(activity.distance || 0);
         const moving = Number(activity.moving_time || 0);
 
-        row.innerHTML = `
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `
           <p class="item-title">${escapeHtml(name)} (${escapeHtml(type)})</p>
           <div class="item-meta">${formatTimeIst(start)} IST | ${formatDistanceKm(distance)} | ${formatDuration(moving)}</div>
         `;
-        list.appendChild(row);
+        list.appendChild(item);
       });
     }
 
-    card.innerHTML = `<div class="day-name">${dayLabel}</div>`;
-    card.appendChild(list);
-    frag.appendChild(card);
+    stravaCell.appendChild(list);
+    row.append(dayCell, calCell, stravaCell);
+    frag.appendChild(row);
   }
 
   elements.weekGrid.innerHTML = "";
@@ -201,26 +209,25 @@ function escapeHtml(value) {
 function bindControls() {
   elements.prevWeek.addEventListener("click", () => {
     state.weekStartKey = addDaysKey(state.weekStartKey, -7);
-    renderStravaWeek();
+    renderWeek();
   });
 
   elements.nextWeek.addEventListener("click", () => {
     state.weekStartKey = addDaysKey(state.weekStartKey, 7);
-    renderStravaWeek();
+    renderWeek();
   });
 
   elements.thisWeek.addEventListener("click", () => {
     state.weekStartKey = startOfWeekKey(istDateKey(new Date()));
-    renderStravaWeek();
+    renderWeek();
   });
 }
 
 async function init() {
   bindControls();
-  elements.status.textContent = "Loading Strava data...";
   state.stravaActivities = await fetchStrava();
-  elements.status.textContent = `Strava: ${state.stravaActivities.length} activities loaded`; 
-  renderStravaWeek();
+  elements.status.textContent = `Strava loaded: ${state.stravaActivities.length} activities`; 
+  renderWeek();
 }
 
 init();
