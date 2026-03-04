@@ -53,6 +53,11 @@ function parseDateInput(value) {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
+function activityDate(activity) {
+  // Prefer UTC source timestamp from Strava, then render in IST.
+  return parseDateInput(activity.start_date) || parseDateInput(activity.start_date_local) || parseDateInput(activity.date);
+}
+
 function formatTimeIst(date) {
   if (!date) return "—";
   return date.toLocaleTimeString([], {
@@ -119,12 +124,12 @@ async function fetchStrava() {
 function stravaForDay(dayKey) {
   return state.stravaActivities
     .filter((activity) => {
-      const dt = parseDateInput(activity.start_date_local || activity.start_date || activity.date);
+      const dt = activityDate(activity);
       return dt && istDateKey(dt) === dayKey;
     })
     .sort((a, b) => {
-      const aTime = parseDateInput(a.start_date_local || a.start_date || a.date)?.getTime() || 0;
-      const bTime = parseDateInput(b.start_date_local || b.start_date || b.date)?.getTime() || 0;
+      const aTime = activityDate(a)?.getTime() || 0;
+      const bTime = activityDate(b)?.getTime() || 0;
       return aTime - bTime;
     });
 }
@@ -172,7 +177,7 @@ function renderWeek() {
       list.innerHTML = '<div class="empty">No completed activities</div>';
     } else {
       items.forEach((activity) => {
-        const start = parseDateInput(activity.start_date_local || activity.start_date || activity.date);
+        const start = activityDate(activity);
         const name = activity.name || "Untitled";
         const type = activity.type || activity.sport_type || "Workout";
         const distance = Number(activity.distance || 0);
