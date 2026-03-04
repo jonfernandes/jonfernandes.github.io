@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jon Fernandes Calendar</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <h1>Jon Fernandes Calendar</h1>
+        <p>Upcoming events from Google Calendar.</p>
+      </header>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Next Events</h2>
+          <button id="refresh-btn" type="button">Refresh</button>
+        </div>
+        <p id="status" class="status">Loading calendar events...</p>
+        <ul id="events" class="events" aria-live="polite"></ul>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
