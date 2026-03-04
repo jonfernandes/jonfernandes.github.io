@@ -102,12 +102,16 @@ function keyFromDateValue(value) {
 
 async function fetchJsonWithFallback(paths) {
   for (const path of paths) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch(path, { cache: "no-store" });
+      const response = await fetch(path, { cache: "no-store", signal: controller.signal });
       if (!response.ok) continue;
       return await response.json();
     } catch (_error) {
       // Try next path.
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
   return null;
@@ -115,21 +119,27 @@ async function fetchJsonWithFallback(paths) {
 
 async function loadData() {
   elements.status.textContent = "Loading data...";
+  try {
+    const [calendarData, stravaData] = await Promise.all([
+      fetchJsonWithFallback(["/calendar/events.json", "../calendar/events.json"]),
+      fetchJsonWithFallback(["/strava/activities.json", "../strava/activities.json"]),
+    ]);
 
-  const [calendarData, stravaData] = await Promise.all([
-    fetchJsonWithFallback(["/calendar/events.json", "../calendar/events.json"]),
-    fetchJsonWithFallback(["/strava/activities.json", "../strava/activities.json"]),
-  ]);
+    state.calendarEvents = Array.isArray(calendarData && calendarData.events) ? calendarData.events : [];
+    state.stravaActivities = Array.isArray(stravaData && stravaData.activities) ? stravaData.activities : [];
 
-  state.calendarEvents = Array.isArray(calendarData?.events) ? calendarData.events : [];
-  state.stravaActivities = Array.isArray(stravaData?.activities) ? stravaData.activities : [];
+    const bits = [];
+    bits.push(`Calendar: ${state.calendarEvents.length} items`);
+    bits.push(`Strava: ${state.stravaActivities.length} activities`);
+    if (!calendarData) bits.push("Calendar file not found");
+    if (!stravaData) bits.push("Strava file not found");
+    elements.status.textContent = bits.join(" | ");
 
-  const bits = [];
-  bits.push(`Calendar: ${state.calendarEvents.length} items`);
-  bits.push(`Strava: ${state.stravaActivities.length} activities`);
-  elements.status.textContent = bits.join(" | ");
-
-  renderWeek();
+    renderWeek();
+  } catch (error) {
+    const message = error && error.message ? error.message : "Unknown load error";
+    elements.status.textContent = `Load failed: ${message}`;
+  }
 }
 
 function eventOccursOnDate(event, dayKey) {
@@ -287,6 +297,13 @@ function escapeHtml(value) {
 }
 
 function bindControls() {
+  if (!elements.prevWeek || !elements.nextWeek || !elements.thisWeek) {
+    if (elements.status) {
+      elements.status.textContent = "Page setup error: missing controls";
+    }
+    return;
+  }
+
   elements.prevWeek.addEventListener("click", () => {
     state.weekStartKey = addDaysKey(state.weekStartKey, -7);
     renderWeek();
@@ -303,5 +320,14 @@ function bindControls() {
   });
 }
 
-bindControls();
-loadData();
+window.addEventListener("error", (event) => {
+  if (!elements.status) return;
+  elements.status.textContent = `Runtime error: ${event.message}`;
+});
+
+if (!elements.weekGrid || !elements.weekLabel || !elements.status) {
+  console.error("Required DOM nodes are missing.");
+} else {
+  bindControls();
+  loadData();
+}
