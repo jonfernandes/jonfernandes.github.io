@@ -62,17 +62,18 @@ body {
   font-size: 1.15rem;
 }
 
-button {
+.button-link {
+  display: inline-block;
   border: 0;
   border-radius: 999px;
   padding: 0.55rem 0.9rem;
   font-weight: 700;
   background: var(--accent);
   color: #fff;
-  cursor: pointer;
+  text-decoration: none;
 }
 
-button:hover {
+.button-link:hover {
   background: var(--accent-2);
 }
 
@@ -81,34 +82,22 @@ button:hover {
   color: var(--muted);
 }
 
-.events {
-  list-style: none;
-  margin: 1rem 0 0;
-  padding: 0;
-  display: grid;
-  gap: 0.65rem;
-}
-
-.event {
+.calendar-frame {
+  width: 100%;
+  min-height: 680px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 0.8rem;
+  margin-top: 0.75rem;
   background: #fff;
-}
-
-.event-title {
-  font-weight: 700;
-}
-
-.event-time {
-  margin-top: 0.2rem;
-  color: var(--muted);
-  font-size: 0.95rem;
 }
 
 @media (max-width: 640px) {
   .panel-head {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .calendar-frame {
+    min-height: 560px;
   }
 }

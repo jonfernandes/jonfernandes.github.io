@@ -10,16 +10,22 @@
     <main class="page">
       <header class="hero">
         <h1>Jon Fernandes Calendar</h1>
-        <p>Upcoming events from Google Calendar.</p>
+        <p>Live public Google Calendar view.</p>
       </header>
 
       <section class="panel">
         <div class="panel-head">
-          <h2>Next Events</h2>
-          <button id="refresh-btn" type="button">Refresh</button>
+          <h2>Calendar</h2>
+          <a id="open-google" class="button-link" href="#" target="_blank" rel="noreferrer">Open in Google Calendar</a>
         </div>
-        <p id="status" class="status">Loading calendar events...</p>
-        <ul id="events" class="events" aria-live="polite"></ul>
+        <p id="status" class="status">Loading embedded calendar...</p>
+        <iframe
+          id="calendar-frame"
+          class="calendar-frame"
+          title="Google Calendar"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
       </section>
     </main>
 
