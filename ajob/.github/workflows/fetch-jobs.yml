@@ -1,4 +1,4 @@
-name: Fetch Jobs
+name: Fetch Jobs 
 
 on:
   # Run automatically every 6 hours
