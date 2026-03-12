@@ -7,22 +7,17 @@ on:
 
 jobs:
   fetch:
-    name: Fetch UK ML/AI Jobs
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: pip install requests
+      - run: pip install requests
 
       - name: Fetch jobs
         env:
@@ -31,14 +26,14 @@ jobs:
           ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
         run: python fetch_jobs.py
 
-      - name: Commit and push jobs.json
+      - name: Commit and push
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
           git add jobs.json
           if git diff --staged --quiet; then
-            echo "No changes to jobs.json, skipping commit"
+            echo "No changes"
           else
-            git commit -m "chore: refresh jobs data $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git commit -m "Update jobs"
             git push
           fi
