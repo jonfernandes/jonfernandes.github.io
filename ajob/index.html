@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UK AI & ML Jobs — Live Feed</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #a5b4fc;
+      --bg: #0d0d1a;
+      --surface: #161628;
+      --surface2: #1e1e38;
+      --surface3: #252545;
+      --text: #e2e8f0;
+      --text-muted: #8892a4;
+      --border: #2a2a4a;
+      --green: #10b981;
+      --green-light: #6ee7b7;
+      --amber: #f59e0b;
+      --amber-light: #fcd34d;
+      --blue: #3b82f6;
+      --blue-light: #93c5fd;
+      --purple: #8b5cf6;
+      --purple-light: #c4b5fd;
+      --red: #ef4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ── HEADER ────────────────────────────────────── */
+    header {
+      background: linear-gradient(160deg, #14142e 0%, #0d0d1a 40%, #16102a 100%);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.25) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 100%, rgba(139,92,246,0.1) 0%, transparent 60%);
+    }
+    header > * { position: relative; }
+
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 40%, #c4b5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .header-pills {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .pill-live   { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.35); color: var(--green-light); }
+    .pill-count  { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.4);  color: var(--primary-light); }
+    .pill-time   { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2);  color: var(--text-muted); }
+    .dot-pulse {
+      width: 7px; height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.85)} }
+
+    /* ── QUICK LINKS BAR ───────────────────────────── */
+    .quicklinks-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+    }
+    .quicklinks-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .ql-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .ql-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.9rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .ql-link:hover { border-color: var(--primary); color: var(--primary-light); background: rgba(99,102,241,0.08); }
+
+    /* ── CONTROLS ──────────────────────────────────── */
+    .controls-wrap {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+    }
+    .controls {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .search-wrap {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 0.55rem 1rem 0.55rem 2.25rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input::placeholder { color: var(--text-muted); }
+    .search-wrap input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+    select {
+      padding: 0.55rem 0.9rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.875rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 2rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238892a4' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.65rem center;
+    }
+    select:focus { border-color: var(--primary); }
+    select option { background: var(--surface2); }
+
+    /* ── MAIN ──────────────────────────────────────── */
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.75rem 2rem 3rem;
+    }
+
+    .stats-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .stats-text { font-size: 0.85rem; color: var(--text-muted); }
+    .stats-text strong { color: var(--text); }
+
+    /* ── JOBS GRID ─────────────────────────────────── */
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1rem;
+    }
+
+    .job-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+      cursor: default;
+    }
+    .job-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(99,102,241,0.45);
+      box-shadow: 0 10px 40px rgba(99,102,241,0.12);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+    }
+    .company-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #fff;
+      flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+    .card-title-block { flex: 1; min-width: 0; }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 0.2rem;
+    }
+    .card-company { font-size: 0.82rem; color: var(--text-muted); }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.22rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .tag-loc    { background: rgba(99,102,241,0.12); color: var(--primary-light); }
+    .tag-salary { background: rgba(16,185,129,0.1);  color: var(--green-light); }
+    .tag-remote { background: rgba(59,130,246,0.1);  color: var(--blue-light); }
+    .tag-cat    { background: rgba(245,158,11,0.1);  color: var(--amber-light); }
+    .tag-source { background: rgba(139,92,246,0.1);  color: var(--purple-light); }
+    .tag-new    { background: rgba(16,185,129,0.18); color: var(--green-light); animation: pulse 2.5s infinite; }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .posted-time { font-size: 0.76rem; color: var(--text-muted); }
+    .apply-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1.1rem;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      transition: background 0.18s, transform 0.1s;
+    }
+    .apply-btn:hover { background: var(--primary-dark); transform: scale(1.02); }
+
+    /* ── EMPTY / LOADING / ERROR ───────────────────── */
+    .center-state {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+    .center-state .icon { font-size: 3.5rem; margin-bottom: 1rem; }
+    .center-state h3 { font-size: 1.2rem; color: var(--text); margin-bottom: 0.4rem; }
+    .center-state p  { font-size: 0.9rem; max-width: 400px; line-height: 1.6; }
+
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin-bottom: 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-box {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+      color: #fca5a5;
+      line-height: 1.6;
+    }
+    .error-box a { color: #f9a8d4; }
+
+    .setup-box {
+      background: rgba(99,102,241,0.07);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 680px;
+    }
+    .setup-box h3 { color: var(--primary-light); font-size: 1rem; margin-bottom: 0.75rem; }
+    .setup-box ol { padding-left: 1.4rem; }
+    .setup-box li { margin-bottom: 0.4rem; }
+    .setup-box code {
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.15rem 0.45rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.82em;
+      color: var(--primary-light);
+    }
+    .setup-box a { color: var(--primary-light); }
+
+    /* ── FOOTER ────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--primary-light); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ────────────────────────────────── */
+    @media (max-width: 640px) {
+      header { padding: 2rem 1rem 1.5rem; }
+      .quicklinks-bar, .controls-wrap { padding: 0.75rem 1rem; }
+      .main { padding: 1.25rem 1rem 2rem; }
+      .jobs-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────── -->
+<header>
+  <h1>🤖 UK AI & ML Jobs</h1>
+  <p>Machine Learning · AI Engineering · Data Science · posted in the last 24 hours</p>
+  <div class="header-pills">
+    <span class="pill pill-live"><span class="dot-pulse"></span> Auto-updated</span>
+    <span class="pill pill-count" id="job-count">Loading…</span>
+    <span class="pill pill-time" id="last-updated">Checking…</span>
+  </div>
+</header>
+
+<!-- ── QUICK LINKS ─────────────────────────────────── -->
+<div class="quicklinks-bar">
+  <div class="quicklinks-inner">
+    <span class="ql-label">Also browse:</span>
+    <a href="https://www.linkedin.com/jobs/search/?keywords=machine%20learning%20engineer&location=United%20Kingdom&f_TPR=r86400&sortBy=DD" target="_blank" rel="noopener" class="ql-link">💼 LinkedIn</a>
+    <a href="https://www.totaljobs.com/jobs/machine-learning?postedWithin=1&lrad=30" target="_blank" rel="noopener" class="ql-link">🔍 TotalJobs</a>
+    <a href="https://www.indeed.co.uk/jobs?q=machine+learning+engineer&l=United+Kingdom&fromage=1&sort=date" target="_blank" rel="noopener" class="ql-link">🔎 Indeed UK</a>
+    <a href="https://www.cv-library.co.uk/search-jobs?q=machine+learning&l=uk&dp=1" target="_blank" rel="noopener" class="ql-link">📋 CV-Library</a>
+    <a href="https://www.technojobs.co.uk/search/?q=machine+learning&date=1" target="_blank" rel="noopener" class="ql-link">💻 Technojobs</a>
+    <a href="https://www.cwjobs.co.uk/jobs/machine-learning?postedWithin=1" target="_blank" rel="noopener" class="ql-link">🖥 CWJobs</a>
+  </div>
+</div>
+
+<!-- ── CONTROLS ────────────────────────────────────── -->
+<div class="controls-wrap">
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <input type="text" id="search-input" placeholder="Filter by title, company, skill, location…" oninput="filterJobs()">
+    </div>
+    <select id="cat-filter" onchange="filterJobs()">
+      <option value="">All Categories</option>
+      <option value="ml">🧠 Machine Learning</option>
+      <option value="ai">🤖 AI Engineering</option>
+      <option value="data">📊 Data Science</option>
+      <option value="nlp">💬 NLP / LLM</option>
+      <option value="cv">👁 Computer Vision</option>
+      <option value="mlops">⚙️ MLOps / Platform</option>
+    </select>
+    <select id="source-filter" onchange="filterJobs()">
+      <option value="">All Sources</option>
+      <option value="reed">Reed.co.uk</option>
+      <option value="adzuna">Adzuna</option>
+    </select>
+    <select id="sort-filter" onchange="filterJobs()">
+      <option value="date">Newest first</option>
+      <option value="salary">Salary (high→low)</option>
+      <option value="company">Company A→Z</option>
+    </select>
+  </div>
+</div>
+
+<!-- ── MAIN CONTENT ────────────────────────────────── -->
+<div class="main">
+  <div id="stats-row" class="stats-row" style="display:none">
+    <p class="stats-text" id="stats-text"></p>
+  </div>
+  <div id="error-area"></div>
+  <div id="jobs-container">
+    <div class="jobs-grid">
+      <div class="center-state">
+        <div class="spinner"></div>
+        <h3>Loading jobs…</h3>
+        <p>Fetching the latest ML & AI jobs in the UK</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Data sourced from <a href="https://www.reed.co.uk/developers/jobseeker" target="_blank">Reed.co.uk API</a>
+  &amp; <a href="https://developer.adzuna.com/" target="_blank">Adzuna API</a>
+  · Refreshed every 6 hours via GitHub Actions
+  · <a href="https://github.com/jonfernandes/jobs" target="_blank">View source on GitHub</a>
+</footer>
+
+<script>
+// ── DATA ─────────────────────────────────────────────
+let allJobs = [];
+
+// Category detection keywords
+const CATS = {
+  nlp:   ['nlp', 'natural language', 'text mining', 'speech recognition', 'transformer', 'bert', 'gpt', 'llm', 'large language', 'rag', 'chatbot'],
+  cv:    ['computer vision', 'image recognition', 'object detection', 'opencv', 'image processing', 'video analytics', 'yolo'],
+  mlops: ['mlops', 'ml platform', 'ml infrastructure', 'feature store', 'model serving', 'kubeflow', 'mlflow', 'model deployment', 'ml engineer', 'platform engineer'],
+  ai:    ['ai engineer', 'artificial intelligence', 'generative ai', 'gen ai', 'genai', 'ai researcher', 'applied ai', 'foundation model', 'prompt'],
+  data:  ['data scientist', 'data science', 'data analyst', 'analytics engineer', 'statistician', 'quantitative'],
+  ml:    ['machine learning', 'deep learning', 'pytorch', 'tensorflow', 'gradient boosting', 'xgboost', 'scikit', 'reinforcement learning', 'neural network'],
+};
+const CAT_LABELS = { ml:'ML', ai:'AI', data:'Data Science', nlp:'NLP/LLM', cv:'Vision', mlops:'MLOps' };
+
+function categorise(job) {
+  const text = `${job.title} ${job.description || ''}`.toLowerCase();
+  for (const [cat, kws] of Object.entries(CATS)) {
+    if (kws.some(k => text.includes(k))) return cat;
+  }
+  return 'ml';
+}
+
+// ── FORMATTING ────────────────────────────────────────
+function timeAgo(iso) {
+  if (!iso) return 'Recently';
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (diff < 60)    return 'Just now';
+  if (diff < 3600)  return `${Math.floor(diff/60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+  if (diff < 172800)return 'Yesterday';
+  return new Date(iso).toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+}
+
+function fmtSalary(min, max) {
+  if (!min && !max) return null;
+  const f = n => n >= 1000 ? `£${Math.round(n/1000)}k` : `£${n}`;
+  if (min && max) return `${f(min)} – ${f(max)}`;
+  if (min) return `From ${f(min)}`;
+  return `Up to ${f(max)}`;
+}
+
+function initials(name) {
+  return (name || '?').trim().split(/\s+/).map(w => w[0]).join('').slice(0,2).toUpperCase();
+}
+
+const GRADIENTS = [
+  ['#6366f1','#8b5cf6'],['#0ea5e9','#6366f1'],['#10b981','#0ea5e9'],
+  ['#f59e0b','#ef4444'],['#ec4899','#8b5cf6'],['#14b8a6','#6366f1'],
+  ['#f97316','#ec4899'],['#84cc16','#0ea5e9'],
+];
+function avatarGrad(name) {
+  let h = 0;
+  for (const c of (name||'')) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const [a,b] = GRADIENTS[h % GRADIENTS.length];
+  return `linear-gradient(135deg,${a},${b})`;
+}
+
+function isRecent(iso) {
+  if (!iso) return false;
+  return (Date.now() - new Date(iso).getTime()) < 6 * 3600 * 1000;
+}
+
+function isRemote(job) {
+  return /remote|hybrid|work from home|wfh/i.test(`${job.title}${job.location||''}${job.description||''}`);
+}
+
+// ── RENDER ────────────────────────────────────────────
+function renderJob(job) {
+  const cat   = categorise(job);
+  const sal   = fmtSalary(job.salary_min, job.salary_max);
+  const rem   = isRemote(job);
+  const fresh = isRecent(job.date_posted);
+  const src   = job.source === 'reed' ? 'Reed' : 'Adzuna';
+
+  return `
+<div class="job-card">
+  <div class="card-header">
+    <div class="company-avatar" style="background:${avatarGrad(job.company)}">${initials(job.company)}</div>
+    <div class="card-title-block">
+      <div class="card-title">${esc(job.title)}</div>
+      <div class="card-company">${esc(job.company || 'Company not listed')}</div>
+    </div>
+  </div>
+
+  <div class="tag-row">
+    ${job.location ? `<span class="tag tag-loc">📍 ${esc(job.location)}</span>` : ''}
+    ${sal           ? `<span class="tag tag-salary">💰 ${sal}</span>`            : ''}
+    ${rem           ? `<span class="tag tag-remote">🏠 Remote/Hybrid</span>`     : ''}
+    <span class="tag tag-cat">${CAT_LABELS[cat]||'ML'}</span>
+    <span class="tag tag-source">${src}</span>
+    ${fresh         ? `<span class="tag tag-new">✨ New</span>`                  : ''}
+  </div>
+
+  ${job.description ? `<div class="card-desc">${esc(stripHtml(job.description)).slice(0,160)}…</div>` : ''}
+
+  <div class="card-footer">
+    <span class="posted-time">🕐 ${timeAgo(job.date_posted)}</span>
+    <a href="${job.url}" target="_blank" rel="noopener noreferrer" class="apply-btn">Apply ↗</a>
+  </div>
+</div>`;
+}
+
+function esc(s) {
+  return String(s||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function stripHtml(s) { return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim(); }
+
+// ── FILTER & SORT ─────────────────────────────────────
+function filterJobs() {
+  const q   = document.getElementById('search-input').value.toLowerCase();
+  const cat = document.getElementById('cat-filter').value;
+  const src = document.getElementById('source-filter').value;
+  const srt = document.getElementById('sort-filter').value;
+
+  let list = allJobs.filter(j => {
+    const text = `${j.title} ${j.company||''} ${j.location||''} ${j.description||''}`.toLowerCase();
+    if (q   && !text.includes(q)) return false;
+    if (cat && categorise(j) !== cat) return false;
+    if (src && j.source !== src) return false;
+    return true;
+  });
+
+  if (srt === 'date')   list.sort((a,b) => new Date(b.date_posted||0) - new Date(a.date_posted||0));
+  if (srt === 'salary') list.sort((a,b) => (b.salary_max||b.salary_min||0) - (a.salary_max||a.salary_min||0));
+  if (srt === 'company')list.sort((a,b) => (a.company||'').localeCompare(b.company||''));
+
+  document.getElementById('job-count').textContent = `${list.length} job${list.length!==1?'s':''}`;
+
+  const statsRow = document.getElementById('stats-row');
+  const statsText = document.getElementById('stats-text');
+  if (list.length > 0) {
+    statsRow.style.display = 'flex';
+    const sources = [...new Set(list.map(j=>j.source))].join(' & ');
+    statsText.innerHTML = `Showing <strong>${list.length}</strong> jobs from ${sources}${q ? ` matching <strong>${esc(q)}</strong>` : ''}`;
+  } else {
+    statsRow.style.display = 'none';
+  }
+
+  const container = document.getElementById('jobs-container');
+  if (list.length === 0) {
+    container.innerHTML = `<div class="jobs-grid"><div class="center-state">
+      <div class="icon">🔍</div>
+      <h3>No jobs match your filters</h3>
+      <p>Try clearing some filters or checking back later — the feed refreshes every 6 hours.</p>
+    </div></div>`;
+  } else {
+    container.innerHTML = `<div class="jobs-grid">${list.map(renderJob).join('')}</div>`;
+  }
+}
+
+// ── LOAD ──────────────────────────────────────────────
+async function loadJobs() {
+  try {
+    const r = await fetch(`jobs.json?_=${Date.now()}`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+
+    allJobs = data.jobs || [];
+
+    if (data.updated_at) {
+      document.getElementById('last-updated').textContent = `Updated ${timeAgo(data.updated_at)}`;
+    } else {
+      document.getElementById('last-updated').textContent = 'Not yet populated';
+    }
+
+    if (allJobs.length === 0) {
+      showSetup();
+    } else {
+      filterJobs();
+    }
+  } catch (err) {
+    if (err.message.includes('404') || err.message.includes('JSON')) {
+      showSetup();
+    } else {
+      document.getElementById('error-area').innerHTML = `
+        <div class="error-box">
+          ⚠️ Could not load jobs data (${err.message}).
+          If this is first time running the app, trigger the GitHub Actions workflow to generate
+          <code>jobs.json</code>. &nbsp;<a href="https://github.com/jonfernandes/jobs/actions" target="_blank">→ Go to Actions tab</a>
+        </div>`;
+      document.getElementById('job-count').textContent = '— jobs';
+      document.getElementById('jobs-container').innerHTML = `<div class="jobs-grid"><div class="center-state">
+        <div class="icon">⚠️</div><h3>Error loading data</h3>
+        <p>Check the console and your GitHub Actions workflow.</p>
+      </div></div>`;
+    }
+  }
+}
+
+function showSetup() {
+  document.getElementById('job-count').textContent = '0 jobs';
+  document.getElementById('last-updated').textContent = 'Not yet populated';
+  document.getElementById('jobs-container').innerHTML = '';
+  document.getElementById('error-area').innerHTML = `
+    <div class="setup-box">
+      <h3>🚀 First-time setup</h3>
+      <p>The jobs feed needs two free API keys, then a one-click workflow run. Follow these steps:</p>
+      <ol>
+        <li>Get a free <strong>Reed API key</strong> at <a href="https://www.reed.co.uk/developers/jobseeker" target="_blank">reed.co.uk/developers</a></li>
+        <li>Get a free <strong>Adzuna App ID + Key</strong> at <a href="https://developer.adzuna.com/" target="_blank">developer.adzuna.com</a></li>
+        <li>In your repo, go to <strong>Settings → Secrets → Actions</strong> and add:
+          <code>REED_API_KEY</code>, <code>ADZUNA_APP_ID</code>, <code>ADZUNA_APP_KEY</code></li>
+        <li>Go to the <a href="https://github.com/jonfernandes/jobs/actions" target="_blank"><strong>Actions tab</strong></a>, select <em>Fetch Jobs</em>, and click <strong>Run workflow</strong></li>
+        <li>After ~30 seconds, refresh this page — jobs will appear!</li>
+      </ol>
+      <p style="margin-top:0.75rem">After setup, the workflow runs automatically every 6 hours.</p>
+    </div>
+    <div class="jobs-grid"><div class="center-state">
+      <div class="icon">⚙️</div>
+      <h3>Waiting for first run</h3>
+      <p>Complete the setup above to start seeing jobs.</p>
+    </div></div>`;
+}
+
+// Load on start, then every 30 min
+loadJobs();
+setInterval(loadJobs, 30 * 60 * 1000);
+</script>
+</body>
+</html>
