@@ -97,6 +97,7 @@ function renderQuickLinks() {
 function renderJobs(jobs) {
   jobsList.innerHTML = '';
   if (!jobs.length) {
+    emptyStateEl.textContent = 'No jobs could be loaded automatically. Use the direct site searches below or click Refresh jobs to retry.';
     emptyStateEl.style.display = 'block';
     return;
   }
@@ -157,3 +158,4 @@ async function loadJobs() {
 
 refreshBtn.addEventListener('click', loadJobs);
 renderQuickLinks();
+loadJobs();
