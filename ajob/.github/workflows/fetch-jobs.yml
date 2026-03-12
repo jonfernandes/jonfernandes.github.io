@@ -1,58 +1,44 @@
-name: Fetch Jobs 
+name: Fetch Jobs
 
 on:
-  # Run automatically every 6 hours
   schedule:
     - cron: "0 */6 * * *"
-
-  # Allow manual trigger from the Actions tab
   workflow_dispatch:
 
 jobs:
   fetch:
     name: Fetch UK ML/AI Jobs
     runs-on: ubuntu-latest
-
     permissions:
-      contents: write   # needed to commit jobs.json back to the repo
+      contents: write
 
     steps:
-      # ── 1. Check out the repository ──────────────────────────────────────
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # ── 2. Set up Python ─────────────────────────────────────────────────
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # ── 3. Install dependencies ──────────────────────────────────────────
       - name: Install dependencies
         run: pip install requests
 
-      # ── 4. Run the job fetcher ───────────────────────────────────────────
       - name: Fetch jobs
         env:
-          REED_API_KEY:   ${{ secrets.REED_API_KEY }}
-          ADZUNA_APP_ID:  ${{ secrets.ADZUNA_APP_ID }}
+          REED_API_KEY: ${{ secrets.REED_API_KEY }}
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
           ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
         run: python fetch_jobs.py
 
-      # ── 5. Commit updated jobs.json ──────────────────────────────────────
-      - name: Commit jobs.json
+      - name: Commit and push jobs.json
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name  "github-actions[bot]"
+          git config --global user.name "github-actions[bot]"
           git add jobs.json
-          # Only commit if something actually changed
-          git diff --staged --quiet \
-            && echo "No changes to jobs.json — skipping commit" \
-            || git commit -m "chore: refresh jobs data [$(date -u '+%Y-%m-%d %H:%M UTC')]"
-
-      # ── 6. Push changes ──────────────────────────────────────────────────
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.8.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          if git diff --staged --quiet; then
+            echo "No changes to jobs.json, skipping commit"
+          else
+            git commit -m "chore: refresh jobs data $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
