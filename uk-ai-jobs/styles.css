@@ -1,0 +1,92 @@
+:root {
+  --bg: #0b1020;
+  --card: #141c33;
+  --text: #eff3ff;
+  --muted: #b8c1e2;
+  --accent: #67a0ff;
+  --ok: #52d49e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: radial-gradient(circle at top, #151f3e, var(--bg));
+  color: var(--text);
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1,
+h2 {
+  margin-bottom: 8px;
+}
+
+p {
+  color: var(--muted);
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 20px 0;
+}
+
+button {
+  background: var(--accent);
+  color: #08122e;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.jobs-list,
+.quick-links {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 24px;
+  display: grid;
+  gap: 10px;
+}
+
+.job-item,
+.quick-link-item {
+  background: var(--card);
+  border: 1px solid #233058;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.job-item a,
+.quick-link-item a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.job-item a:hover,
+.quick-link-item a:hover {
+  text-decoration: underline;
+}
+
+.meta {
+  color: var(--ok);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.empty-state {
+  background: var(--card);
+  border: 1px dashed #39508d;
+  border-radius: 10px;
+  padding: 14px;
+}
