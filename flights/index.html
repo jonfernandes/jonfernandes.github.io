@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flights: India to England</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero">
+      <p class="eyebrow">June to August 2026</p>
+      <h1>Cheapest flights from India to England.</h1>
+      <p class="hero-copy">
+        Compare every round-trip combination from <strong>BLR</strong> and <strong>COK</strong> to
+        <strong>LHR</strong> and <strong>LGW</strong> for departures on <strong>22-23 June</strong>
+        and returns on <strong>6-8 August</strong>.
+      </p>
+      <div class="hero-actions">
+        <button id="sort-cheapest" class="button button-primary" type="button">Show cheapest first</button>
+        <button id="clear-prices" class="button button-secondary" type="button">Clear saved prices</button>
+      </div>
+      <div class="hero-note">
+        <p>Live prices are not embedded here. Use the search links, then enter the quoted fare to rank options locally.</p>
+      </div>
+    </section>
+
+    <section class="summary-grid" aria-label="Summary cards">
+      <article class="summary-card">
+        <span class="summary-label">Route combinations</span>
+        <strong id="route-count">0</strong>
+      </article>
+      <article class="summary-card">
+        <span class="summary-label">Date combinations</span>
+        <strong id="date-count">0</strong>
+      </article>
+      <article class="summary-card summary-card-highlight">
+        <span class="summary-label">Current cheapest</span>
+        <strong id="cheapest-flight">Add prices to compare</strong>
+      </article>
+    </section>
+
+    <section class="filters">
+      <label>
+        From
+        <select id="origin-filter">
+          <option value="ALL">All origins</option>
+        </select>
+      </label>
+      <label>
+        To
+        <select id="destination-filter">
+          <option value="ALL">All destinations</option>
+        </select>
+      </label>
+      <label>
+        Departure
+        <select id="departure-filter">
+          <option value="ALL">Any departure date</option>
+        </select>
+      </label>
+      <label>
+        Return
+        <select id="return-filter">
+          <option value="ALL">Any return date</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="results-panel">
+      <div class="results-header">
+        <div>
+          <p class="results-title">Flight combinations</p>
+          <p id="results-meta" class="results-meta"></p>
+        </div>
+      </div>
+      <div id="results" class="results-list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <template id="result-card-template">
+    <article class="result-card">
+      <div class="route-block">
+        <p class="route-airports"></p>
+        <p class="route-dates"></p>
+      </div>
+      <div class="price-block">
+        <label>
+          Price
+          <div class="price-input-wrap">
+            <span>₹</span>
+            <input class="price-input" type="number" min="0" step="1" inputmode="numeric" placeholder="Enter fare">
+          </div>
+        </label>
+        <p class="price-caption">Saved in this browser.</p>
+      </div>
+      <div class="card-actions">
+        <a class="button button-primary search-link" href="#" target="_blank" rel="noreferrer">Open search</a>
+      </div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
