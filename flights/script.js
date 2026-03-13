@@ -81,7 +81,10 @@ function buildCombinations() {
 }
 
 function buildGoogleFlightsUrl(origin, destination, departure, returning) {
-  return `https://www.google.com/travel/flights?q=Flights%20from%20${origin}%20to%20${destination}%20on%20${departure}%20through%20${returning}%20round%20trip`;
+  const query = encodeURIComponent(
+    `Flights from ${origin} to ${destination} on ${departure} returning ${returning} round trip for 3 adults and 2 children`
+  );
+  return `https://www.google.com/travel/flights?q=${query}`;
 }
 
 function populateSelect(select, values, formatter = (value) => value) {
