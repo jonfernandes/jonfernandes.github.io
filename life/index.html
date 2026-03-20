@@ -255,15 +255,11 @@
       for (let y = 0; y < rows; y += 1) {
         // Top row starts at birth/earlier years; lower rows move forward in time.
         const yearFromBirth = y;
-        for (let x = 0; x < cols; x += 1) {
-          const adultStart = 19;
-          let on = false;
-          if (yearFromBirth >= Math.max(0, rows - adultStart)) {
-            on = true;
-          } else {
-            const yearly = Math.max(0, Math.round(visitParentsWeeks + (Math.random() * 2 - 1)));
-            on = x < yearly;
-          }
+        const adultStart = 19;
+      const isAdult = yearFromBirth >= Math.max(0, rows - adultStart);
+      const yearly = isAdult ? cols : Math.max(0, Math.round(visitParentsWeeks + (Math.random() * 2 - 1)));
+      for (let x = 0; x < cols; x += 1) {
+          const on = x < yearly;
 
           ctx.fillStyle = on ? "#6b7280" : "#ffffff";
           ctx.fillRect(x * cellW, y * cellH, cellW, cellH);
