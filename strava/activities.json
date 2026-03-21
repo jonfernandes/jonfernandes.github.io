@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-21T08:17:38.424Z",
+  "generated_at": "2026-03-21T09:19:58.576Z",
   "activities": [
     {
       "resource_state": 2,
@@ -25,7 +25,7 @@
       "location_state": null,
       "location_country": null,
       "achievement_count": 1,
-      "kudos_count": 0,
+      "kudos_count": 1,
       "comment_count": 0,
       "athlete_count": 2,
       "photo_count": 0,
@@ -72,7 +72,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Piano",
+      "name": "Trumpet",
       "distance": 0,
       "moving_time": 728,
       "elapsed_time": 728,
