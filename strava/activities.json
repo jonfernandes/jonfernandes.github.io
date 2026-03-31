@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-31T08:57:25.478Z",
+  "generated_at": "2026-03-31T09:58:52.368Z",
   "activities": [
     {
       "resource_state": 2,
@@ -73,7 +73,7 @@
         "id": 181012349,
         "resource_state": 1
       },
-      "name": "Morning Swim",
+      "name": "Deep Work",
       "distance": 76.4,
       "moving_time": 2103,
       "elapsed_time": 2103,
@@ -90,7 +90,7 @@
       "location_state": null,
       "location_country": null,
       "achievement_count": 0,
-      "kudos_count": 0,
+      "kudos_count": 1,
       "comment_count": 0,
       "athlete_count": 1,
       "photo_count": 0,
@@ -156,7 +156,7 @@
       "location_state": null,
       "location_country": null,
       "achievement_count": 0,
-      "kudos_count": 0,
+      "kudos_count": 1,
       "comment_count": 0,
       "athlete_count": 1,
       "photo_count": 0,
