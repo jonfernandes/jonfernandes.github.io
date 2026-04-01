@@ -1,6 +1,72 @@
 {
-  "generated_at": "2026-04-01T01:15:45.535Z",
+  "generated_at": "2026-04-01T04:36:58.519Z",
   "activities": [
+    {
+      "resource_state": 2,
+      "athlete": {
+        "id": 181012349,
+        "resource_state": 1
+      },
+      "name": "Morning Swim",
+      "distance": 124.8,
+      "moving_time": 1897,
+      "elapsed_time": 1897,
+      "total_elevation_gain": 0,
+      "type": "Swim",
+      "sport_type": "Swim",
+      "device_name": "Garmin Forerunner 255",
+      "id": 17933183667,
+      "start_date": "2026-04-01T02:59:49Z",
+      "start_date_local": "2026-04-01T07:59:49Z",
+      "timezone": "(GMT+05:00) Indian/Maldives",
+      "utc_offset": 18000,
+      "location_city": null,
+      "location_state": null,
+      "location_country": null,
+      "achievement_count": 0,
+      "kudos_count": 0,
+      "comment_count": 0,
+      "athlete_count": 1,
+      "photo_count": 0,
+      "map": {
+        "id": "a17933183667",
+        "summary_polyline": "sqpXchd{LHDHPF?@WCGA@BKAPKJAA",
+        "resource_state": 2
+      },
+      "trainer": false,
+      "commute": false,
+      "manual": false,
+      "private": false,
+      "visibility": "everyone",
+      "flagged": false,
+      "gear_id": null,
+      "start_latlng": [
+        4.186028,
+        72.772022
+      ],
+      "end_latlng": [
+        4.185963,
+        72.771973
+      ],
+      "average_speed": 0.066,
+      "max_speed": 1.12,
+      "average_cadence": 28.2,
+      "average_temp": 29,
+      "has_heartrate": true,
+      "average_heartrate": 95.8,
+      "max_heartrate": 129,
+      "heartrate_opt_out": false,
+      "display_hide_heartrate_option": true,
+      "elev_high": 9.5,
+      "elev_low": 9.5,
+      "upload_id": 19033223045,
+      "upload_id_str": "19033223045",
+      "external_id": "garmin_ping_553036788051",
+      "from_accepted_tag": false,
+      "pr_count": 0,
+      "total_photo_count": 0,
+      "has_kudoed": false
+    },
     {
       "resource_state": 2,
       "athlete": {
