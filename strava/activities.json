@@ -1,6 +1,72 @@
 {
-  "generated_at": "2026-04-14T10:04:22.913Z",
+  "generated_at": "2026-04-14T11:48:08.532Z",
   "activities": [
+    {
+      "resource_state": 2,
+      "athlete": {
+        "id": 181012349,
+        "resource_state": 1
+      },
+      "name": "Afternoon Workout",
+      "distance": 10.1,
+      "moving_time": 35,
+      "elapsed_time": 2102,
+      "total_elevation_gain": 0,
+      "type": "Workout",
+      "sport_type": "Workout",
+      "workout_type": null,
+      "device_name": "Garmin Forerunner 255",
+      "id": 18103132830,
+      "start_date": "2026-04-14T10:54:07Z",
+      "start_date_local": "2026-04-14T16:24:07Z",
+      "timezone": "(GMT+05:30) Asia/Kolkata",
+      "utc_offset": 19800,
+      "location_city": null,
+      "location_state": null,
+      "location_country": null,
+      "achievement_count": 0,
+      "kudos_count": 0,
+      "comment_count": 0,
+      "athlete_count": 1,
+      "photo_count": 0,
+      "map": {
+        "id": "a18103132830",
+        "summary_polyline": "waudAyafsMB@IHLA@CE?@?EE",
+        "resource_state": 2
+      },
+      "trainer": false,
+      "commute": false,
+      "manual": false,
+      "private": false,
+      "visibility": "everyone",
+      "flagged": false,
+      "gear_id": null,
+      "start_latlng": [
+        11.418042,
+        76.713414
+      ],
+      "end_latlng": [
+        11.41804,
+        76.713419
+      ],
+      "average_speed": 0.289,
+      "max_speed": 0.56,
+      "average_cadence": 0,
+      "has_heartrate": true,
+      "average_heartrate": 79.1,
+      "max_heartrate": 103,
+      "heartrate_opt_out": false,
+      "display_hide_heartrate_option": true,
+      "elev_high": 2266.6,
+      "elev_low": 2261.2,
+      "upload_id": 19204964086,
+      "upload_id_str": "19204964086",
+      "external_id": "garmin_ping_558485331251",
+      "from_accepted_tag": false,
+      "pr_count": 0,
+      "total_photo_count": 0,
+      "has_kudoed": false
+    },
     {
       "resource_state": 2,
       "athlete": {
