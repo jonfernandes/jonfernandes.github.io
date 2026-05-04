@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UK AI/ML Jobs (Last 24 Hours)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>UK AI/ML Jobs — Last 24 Hours</h1>
+      <p>Aggregates recent roles from LinkedIn, Totaljobs, and other UK job boards.</p>
+    </header>
+
+    <section class="controls" aria-label="Search controls">
+      <button id="refresh-btn" type="button">Refresh jobs</button>
+      <span id="status" role="status" aria-live="polite">Ready.</span>
+    </section>
+
+    <section>
+      <h2>Latest matches</h2>
+      <ul id="jobs-list" class="jobs-list"></ul>
+      <p id="empty-state" class="empty-state">Loading jobs. If none appear, use the direct site searches below.</p>
+    </section>
+
+    <section>
+      <h2>Direct site searches (last 24 hours)</h2>
+      <ul id="quick-links" class="quick-links"></ul>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jon Fernandes Calendar</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <h1>Jon Fernandes Calendar</h1>
+        <p>Live public Google Calendar view.</p>
+      </header>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Calendar</h2>
+          <a id="open-google" class="button-link" href="#" target="_blank" rel="noreferrer">Open in Google Calendar</a>
+        </div>
+        <p id="status" class="status">Loading embedded calendar...</p>
+        <iframe
+          id="calendar-frame"
+          class="calendar-frame"
+          title="Google Calendar"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

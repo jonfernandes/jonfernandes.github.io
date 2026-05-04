@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You</title>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+        label { display: inline-block; width: 220px; }
+        input[type="number"], input[type="text"], select { margin-bottom: 14px; }
+        .hidden { display: none; }
+        canvas { display: block; margin: 10px 0; }
+        .section { margin-top: 28px; }
+    </style>
+</head>
+<body>
+    <h1>Your life</h1>
+    <form id="lifeForm" onsubmit="generate(event)">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" min="1" max="99" required><br>
+
+        <label for="sex">Sex:</label>
+        <select id="sex" name="sex">
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+        </select><br>
+
+        <label for="mother_alive">Is your mother alive?</label>
+        <select id="mother_alive" name="mother_alive" onchange="toggleDiv('mother_age_div', this.value)">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select><br>
+
+        <div id="mother_age_div" class="hidden">
+            <label for="mother_age">Mother's Age:</label>
+            <input type="number" id="mother_age" name="mother_age" min="1" max="120"><br>
+        </div>
+
+        <label for="father_alive">Is your father alive?</label>
+        <select id="father_alive" name="father_alive" onchange="toggleDiv('father_age_div', this.value)">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select><br>
+
+        <div id="father_age_div" class="hidden">
+            <label for="father_age">Father's Age:</label>
+            <input type="number" id="father_age" name="father_age" min="1" max="120"><br>
+        </div>
+
+        <label for="has_children">Do you have children?</label>
+        <select id="has_children" name="has_children" onchange="toggleDiv('children_div', this.value)">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select><br>
+
+        <div id="children_div" class="hidden">
+            <div id="children_entries"></div>
+            <button type="button" id="add_child_button" onclick="addChild()">Add Child</button><br><br>
+        </div>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        let childCount = 0;
+
+        function toggleDiv(id, value) {
+            document.getElementById(id).className = value === 'yes' ? '' : 'hidden';
+        }
+
+        function addChild() {
+            childCount++;
+            const n = childCount;
+            const div = document.createElement('div');
+            div.id = 'child_div_' + n;
+            div.innerHTML = `
+                <label for="child_age_${n}">Child ${n} Age:</label>
+                <input type="number" id="child_age_${n}" name="child_age" min="0" max="17"><br>
+                <label for="child_sex_${n}">Child ${n} Sex:</label>
+                <select id="child_sex_${n}" name="child_sex">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select><br><br>
+            `;
+            document.getElementById('add_child_button').insertAdjacentElement('beforebegin', div);
+        }
+
+        function normalRandom(mean, std) {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return mean + std * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        function clamp(val, min, max) {
+            return Math.max(min, Math.min(max, val));
+        }
+
+        function makeCanvas(width, height) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            return canvas;
+        }
+
+        function drawGrid10x10(age, limit, filledColor, remainingColor) {
+            const cellSize = 40;
+            const canvas = makeCanvas(10 * cellSize, 10 * cellSize);
+            const ctx = canvas.getContext('2d');
+
+            for (let i = 0; i < 100; i++) {
+                const row = Math.floor(i / 10);
+                const col = i % 10;
+                const x = col * cellSize;
+                const y = row * cellSize;
+
+                if (i < age) ctx.fillStyle = filledColor;
+                else if (i < limit) ctx.fillStyle = remainingColor;
+                else ctx.fillStyle = 'white';
+
+                ctx.fillRect(x, y, cellSize, cellSize);
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x + 0.5, y + 0.5, cellSize - 1, cellSize - 1);
+            }
+            return canvas;
+        }
+
+        function drawGrowingUp(age) {
+            const visitWeeks = 4;
+            const height = age + 1;
+            const width = 52;
+            const thisYear = new Date().getFullYear();
+            const yob = thisYear - age - 1;
+
+            const grid = Array.from({ length: height }, () => new Array(width).fill(0));
+
+            // Last 20 rows (childhood: years 0-19) all filled
+            for (let r = Math.max(0, height - 20); r < height; r++) {
+                for (let c = 0; c < width; c++) grid[r][c] = 1;
+            }
+
+            // Adult years: random visits
+            for (let i = 0; i < age - 19; i++) {
+                const raw = normalRandom(visitWeeks, 1);
+                const weeks = Math.round(clamp(raw, 0, visitWeeks));
+                for (let c = 0; c < weeks; c++) grid[i][c] = 1;
+            }
+
+            const cellW = 12;
+            const cellH = 18;
+            const labelW = 50;
+            const canvas = makeCanvas(labelW + width * cellW, height * cellH + 2);
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let r = 0; r < height; r++) {
+                for (let c = 0; c < width; c++) {
+                    const x = labelW + c * cellW;
+                    const y = r * cellH;
+                    ctx.fillStyle = grid[r][c] === 1 ? '#888' : 'white';
+                    ctx.fillRect(x, y, cellW, cellH);
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(x + 0.5, y + 0.5, cellW - 1, cellH - 1);
+                }
+            }
+
+            // Y-axis labels: row 0 = most recent year, row height-1 = birth year
+            ctx.fillStyle = 'black';
+            ctx.font = '11px monospace';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            for (let r = 0; r < height; r++) {
+                const year = yob + height - r;
+                ctx.fillText(year, labelW - 4, r * cellH + cellH / 2);
+            }
+
+            return canvas;
+        }
+
+        function section(title, canvas) {
+            const div = document.createElement('div');
+            div.className = 'section';
+            const h2 = document.createElement('h2');
+            h2.textContent = title;
+            div.appendChild(h2);
+            div.appendChild(canvas);
+            return div;
+        }
+
+        function generate(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const age = parseInt(document.getElementById('age').value);
+            const sex = document.getElementById('sex').value;
+            const motherAlive = document.getElementById('mother_alive').value;
+            const motherAge = motherAlive === 'yes' ? parseInt(document.getElementById('mother_age').value) : null;
+            const fatherAlive = document.getElementById('father_alive').value;
+            const fatherAge = fatherAlive === 'yes' ? parseInt(document.getElementById('father_age').value) : null;
+
+            const childAgeInputs = document.querySelectorAll('[name="child_age"]');
+            const childSexInputs = document.querySelectorAll('[name="child_sex"]');
+            const children = Array.from(childAgeInputs).map((el, i) => ({
+                age: parseInt(el.value),
+                sex: childSexInputs[i].value
+            }));
+
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+
+            const lifeExp = sex === 'M' ? 79 : 81;
+            const selfColor = sex === 'M' ? 'blue' : 'pink';
+            const selfCanvas = drawGrid10x10(age, lifeExp, selfColor, 'gray');
+            results.appendChild(section('You', selfCanvas));
+
+            if (motherAlive === 'yes' && motherAge !== null) {
+                const canvas = drawGrid10x10(motherAge, 81, 'red', 'lightpink');
+                results.appendChild(section('Your mother', canvas));
+            }
+
+            if (fatherAlive === 'yes' && fatherAge !== null) {
+                const canvas = drawGrid10x10(fatherAge, 79, 'blue', 'lightblue');
+                results.appendChild(section('Your father', canvas));
+            }
+
+            if (motherAlive === 'yes' || fatherAlive === 'yes') {
+                const canvas = drawGrowingUp(age);
+                results.appendChild(section('Growing up', canvas));
+            }
+
+            children.forEach((child, i) => {
+                const filledColor = child.sex === 'M' ? 'blue' : 'red';
+                const remainColor = child.sex === 'M' ? 'lightblue' : 'lightpink';
+                const canvas = drawGrid10x10(child.age, 18, filledColor, remainColor);
+                results.appendChild(section(`Your child`, canvas));
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #f8faf8;
+      --text: #1f2937;
+      --card: #ffffff;
+      --line: #d1d5db;
+      --primary: #0f766e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f8faf8 0%, #eef6f3 100%);
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+    }
+
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1, h2 {
+      margin: 0 0 12px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #374151;
+    }
+
+    .row { display: flex; gap: 8px; }
+
+    .plots {
+      display: block;
+      margin-top: 24px;
+    }
+
+    canvas {
+      width: min(90vmin, 900px);
+      max-width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      image-rendering: pixelated;
+    }
+
+    .plot-screen {
+      min-height: 100vh;
+      margin: 0;
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      scroll-snap-align: start;
+    }
+
+    .plot-screen h2 {
+      margin: 0;
+      text-align: center;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Your Life</h1>
+
+    <section class="card">
+      <form id="life-form">
+        <div class="grid">
+          <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div>
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" min="0" max="100" required>
+          </div>
+          <div>
+            <label for="sex">Sex</label>
+            <select id="sex" name="sex">
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
+          </div>
+          <div>
+            <label for="mother_alive">Is your mother alive?</label>
+            <select id="mother_alive" name="mother_alive">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div id="mother_age_block" class="hidden">
+            <label for="mother_age">Mother age</label>
+            <input type="number" id="mother_age" name="mother_age" min="0" max="100">
+          </div>
+          <div>
+            <label for="father_alive">Is your father alive?</label>
+            <select id="father_alive" name="father_alive">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div id="father_age_block" class="hidden">
+            <label for="father_age">Father age</label>
+            <input type="number" id="father_age" name="father_age" min="0" max="100">
+          </div>
+          <div>
+            <label for="has_children">Do you have children?</label>
+            <select id="has_children" name="has_children">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="children_block" class="card hidden" style="margin-top:12px;">
+          <h2 style="font-size:18px;">Children</h2>
+          <div id="children_entries"></div>
+          <div class="row" style="margin-top:10px;">
+            <button type="button" class="secondary" id="add-child">Add Child</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 12px;">
+          <button type="submit">Generate</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="plots" class="plots"></section>
+  </main>
+
+  <script>
+    const motherAlive = document.getElementById("mother_alive");
+    const fatherAlive = document.getElementById("father_alive");
+    const hasChildren = document.getElementById("has_children");
+    const motherAgeBlock = document.getElementById("mother_age_block");
+    const fatherAgeBlock = document.getElementById("father_age_block");
+    const childrenBlock = document.getElementById("children_block");
+    const childrenEntries = document.getElementById("children_entries");
+    const addChildBtn = document.getElementById("add-child");
+    const form = document.getElementById("life-form");
+    const plots = document.getElementById("plots");
+
+    let childCount = 0;
+
+    function toggleBlocks() {
+      motherAgeBlock.classList.toggle("hidden", motherAlive.value !== "yes");
+      fatherAgeBlock.classList.toggle("hidden", fatherAlive.value !== "yes");
+      childrenBlock.classList.toggle("hidden", hasChildren.value !== "yes");
+    }
+
+    function addChild() {
+      childCount += 1;
+      const row = document.createElement("div");
+      row.className = "grid";
+      row.innerHTML = `
+        <div>
+          <label>Child ${childCount} age</label>
+          <input type="number" min="0" max="100" name="child_age" required>
+        </div>
+        <div>
+          <label>Child ${childCount} sex</label>
+          <select name="child_sex">
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+          </select>
+        </div>
+      `;
+      childrenEntries.appendChild(row);
+    }
+
+    function drawGrid(canvas, filled, total, colors) {
+      const ctx = canvas.getContext("2d");
+      const size = 10;
+      const cell = 30;
+      canvas.width = size * cell;
+      canvas.height = size * cell;
+
+      for (let i = 0; i < size * size; i += 1) {
+        const r = Math.floor(i / size);
+        const c = i % size;
+        let color = colors.empty;
+        if (filled <= total) {
+          if (i < filled) color = colors.filled;
+          else if (i < total) color = colors.remaining;
+        } else {
+          if (i < total) color = colors.filled;
+          else if (i < filled) color = "#f97316";
+        }
+
+        ctx.fillStyle = color;
+        ctx.fillRect(c * cell, r * cell, cell, cell);
+        ctx.strokeStyle = "#111827";
+        ctx.strokeRect(c * cell, r * cell, cell, cell);
+      }
+    }
+
+    function drawGrowingUp(canvas, age, visitParentsWeeks = 4) {
+      const rows = Math.max(1, age + 1);
+      const cols = 52;
+      const cellW = 8;
+      const cellH = 8;
+      canvas.width = cols * cellW;
+      canvas.height = rows * cellH;
+
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let y = 0; y < rows; y += 1) {
+        // Top row starts at birth/earlier years; lower rows move forward in time.
+        const yearFromBirth = y;
+        const adultStart = 19;
+      const isAdult = yearFromBirth >= Math.max(0, rows - adultStart);
+      const yearly = isAdult ? cols : Math.max(0, Math.round(visitParentsWeeks + (Math.random() * 2 - 1)));
+      for (let x = 0; x < cols; x += 1) {
+          const on = x < yearly;
+
+          ctx.fillStyle = on ? "#6b7280" : "#ffffff";
+          ctx.fillRect(x * cellW, y * cellH, cellW, cellH);
+          ctx.strokeStyle = "#111827";
+          ctx.strokeRect(x * cellW, y * cellH, cellW, cellH);
+        }
+      }
+    }
+
+    function plotCard(title) {
+      const card = document.createElement("article");
+      card.className = "card plot-screen";
+      const h2 = document.createElement("h2");
+      h2.textContent = title;
+      const canvas = document.createElement("canvas");
+      card.append(h2, canvas);
+      plots.appendChild(card);
+      return canvas;
+    }
+
+    function clamp(num, min, max) {
+      return Math.max(min, Math.min(max, num));
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      plots.innerHTML = "";
+
+      const age = clamp(Number(document.getElementById("age").value), 0, 100);
+      const sex = document.getElementById("sex").value;
+      const lifeExpectancy = sex === "M" ? 79 : 81;
+
+      const you = plotCard("You");
+      drawGrid(you, age, lifeExpectancy, {
+        empty: "#ffffff",
+        filled: sex === "M" ? "#2563eb" : "#ec4899",
+        remaining: "#9ca3af"
+      });
+
+      if (motherAlive.value === "yes") {
+        const mAge = Number(document.getElementById("mother_age").value || 0);
+        const mom = plotCard("Your mother");
+        drawGrid(mom, mAge, 81, { empty: "#ffffff", filled: "#ef4444", remaining: "#fbcfe8" });
+      }
+
+      if (fatherAlive.value === "yes") {
+        const fAge = Number(document.getElementById("father_age").value || 0);
+        const dad = plotCard("Your father");
+        drawGrid(dad, fAge, 79, { empty: "#ffffff", filled: "#2563eb", remaining: "#bfdbfe" });
+      }
+
+      if (motherAlive.value === "yes" || fatherAlive.value === "yes") {
+        const gu = plotCard("Growing up");
+        drawGrowingUp(gu, age, 4);
+      }
+
+      if (hasChildren.value === "yes") {
+        const childAges = Array.from(document.querySelectorAll('input[name="child_age"]'));
+        const childSexes = Array.from(document.querySelectorAll('select[name="child_sex"]'));
+
+        childAges.forEach((el, idx) => {
+          const childAge = Number(el.value || 0);
+          const childSex = childSexes[idx] ? childSexes[idx].value : "M";
+          const childCanvas = plotCard(`Your child ${idx + 1}`);
+          drawGrid(childCanvas, childAge, 18, {
+            empty: "#ffffff",
+            filled: childSex === "M" ? "#2563eb" : "#ef4444",
+            remaining: childSex === "M" ? "#bfdbfe" : "#fbcfe8"
+          });
+        });
+      }
+    });
+
+    motherAlive.addEventListener("change", toggleBlocks);
+    fatherAlive.addEventListener("change", toggleBlocks);
+    hasChildren.addEventListener("change", toggleBlocks);
+    addChildBtn.addEventListener("click", addChild);
+    toggleBlocks();
+  </script>
+</body>
+</html>

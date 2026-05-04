@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Strava Activity Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-orbit"></div>
+    <div class="bg-grain"></div>
+
+    <header class="hero">
+      <div class="hero__content">
+        <p class="eyebrow">Strava • Activity Dashboard</p>
+        <h1>All Activities, One View</h1>
+        <p class="subhead">
+          A fast, local-first dashboard that runs entirely in your browser.
+        </p>
+        <div class="hero__actions">
+          <button id="refresh" class="btn">Refresh Data</button>
+          <div class="toggle">
+            <span>Units</span>
+            <button id="unitToggle" class="btn btn--ghost">Miles</button>
+          </div>
+        </div>
+      </div>
+      <div class="hero__panel">
+        <div class="stat">
+          <span class="stat__label">Total Distance</span>
+          <span class="stat__value" id="totalDistance">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat__label">Total Time</span>
+          <span class="stat__value" id="totalTime">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat__label">Elevation Gain</span>
+          <span class="stat__value" id="totalElevation">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat__label">Activities</span>
+          <span class="stat__value" id="totalActivities">—</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="controls">
+        <div class="control">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Search by name, type, or location" />
+        </div>
+        <div class="control">
+          <label for="typeFilter">Type</label>
+          <select id="typeFilter">
+            <option value="all">All types</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="yearFilter">Year</label>
+          <select id="yearFilter">
+            <option value="all">All years</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="sort">Sort</label>
+          <select id="sort">
+            <option value="date-desc">Newest first</option>
+            <option value="date-asc">Oldest first</option>
+            <option value="distance-desc">Longest distance</option>
+            <option value="distance-asc">Shortest distance</option>
+            <option value="elevation-desc">Most elevation</option>
+            <option value="time-desc">Longest time</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="summary" id="summary"></section>
+
+      <section class="grid" id="activityGrid"></section>
+
+      <section class="empty" id="emptyState" hidden>
+        <h2>No activities loaded</h2>
+        <p>
+          Add a file named <code>activities.json</code> in this folder to populate
+          the dashboard. A starter file is included as
+          <code>activities.sample.json</code>.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Data stays on this page. No trackers, no servers, no uploads.
+        <span id="lastUpdated"></span>
+      </p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
