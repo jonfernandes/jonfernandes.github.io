@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-07T15:23:18.937Z",
+  "generated_at": "2026-05-07T17:28:59.899Z",
   "activities": [
     {
       "resource_state": 2,
@@ -84,7 +84,7 @@
       "location_state": null,
       "location_country": null,
       "achievement_count": 0,
-      "kudos_count": 0,
+      "kudos_count": 1,
       "comment_count": 0,
       "athlete_count": 1,
       "photo_count": 0,
@@ -321,7 +321,7 @@
       "location_state": null,
       "location_country": null,
       "achievement_count": 0,
-      "kudos_count": 0,
+      "kudos_count": 1,
       "comment_count": 0,
       "athlete_count": 1,
       "photo_count": 0,
