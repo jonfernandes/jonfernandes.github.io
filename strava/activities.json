@@ -1,6 +1,71 @@
 {
-  "generated_at": "2026-05-16T05:15:58.918Z",
+  "generated_at": "2026-05-16T07:44:11.222Z",
   "activities": [
+    {
+      "resource_state": 2,
+      "athlete": {
+        "id": 181012349,
+        "resource_state": 1
+      },
+      "name": "Morning Ride",
+      "distance": 52980.8,
+      "moving_time": 11139,
+      "elapsed_time": 13279,
+      "total_elevation_gain": 978,
+      "type": "Ride",
+      "sport_type": "Ride",
+      "workout_type": null,
+      "device_name": "Garmin Forerunner 255",
+      "id": 18524488269,
+      "start_date": "2026-05-16T00:55:23Z",
+      "start_date_local": "2026-05-16T06:25:23Z",
+      "timezone": "(GMT+05:30) Asia/Kolkata",
+      "utc_offset": 19800,
+      "location_city": null,
+      "location_state": null,
+      "location_country": null,
+      "achievement_count": 4,
+      "kudos_count": 0,
+      "comment_count": 0,
+      "athlete_count": 3,
+      "photo_count": 0,
+      "map": {
+        "id": "a18524488269",
+        "summary_polyline": "keudAqgfsMj@x@k@vAnDx@vCdDAdCuBrAPrDjGp@zPxKlEQ~CmGrEfDlFv@dIlJzEzAxDnJxMbFfIpH|B`HsGlU[zPrGzAlGsBuCfNfAbCpFhAfAtCbEhBxMgBrGlA`DrB\\tDdCJhFzImFNmI|D{CnLnCtFeIgBqHlGYfD|AtF`IfGJ|BfGhJ~BCbBpDjHvBpOeCbTlKdDIlC|BdN|DxZa@~CbE~D\\FvM`G[~@nChCnAxJkBtBdFrEJ|@zFgArClBpJnEfCcChBf@hFaC~HVfAxBn@jFmDlIeB|@|Ca@zB|DlAa@tBv@bClAx@lBm@nBxGfE~B`G\\bFzD@rBcERkBvBlHdEn@fLtB?~BeGpFxBp@fCqArG`CnB~BY`@tCnCxAVlEnD`@yAhHdBDlDsC~Gv@bDxFdGjE`L`ApRlLnDpFn@xGbBnAjFfNfHiBzGbAzCdDfE`AdTNzNqAnDbA|CyAhFrAdMSbHdB~AbCkOdEf@lFjAbClJfEChCrAoCf@rGjAkBnDrHxF}A@fFvAnA~@uCtEwDnEdAdH_AdAb@XpCdKaBvE|Fg@aGjAw@CvBvFBx@tFlCd@qChEPlBjAd@fF_FjMR]kFaDwBbHf@zBqA{EiBuAoJrAwGyAwBDqC~CwMjAGdHjGnAnFzKnFnB}@jG~BfHWbIyFg@mH|AwAzC}XoBaBQiFlAeE{GaHnCYpCmFjFhBvH{DzEg@LuGjBuAfCPZkErAo@}BPi@zBPqDrCmEbCr@sCaBmFrDfDqFjCeAmKdDhFiG`DoAfDf@tE{DxDKjCqBfBb@l@vBh@}DzAhDk@nCtEnBKhDrByGkAwAbErAkArEhDmA@}FqAmDpG`BJdJfGKmBgCJuEsAsD`CkCuKiFjCgGj@mN|DeCuD\\yBfCjCsEgBj@{AiAzAwCNiFoEsA|BrBgBrG?}GuDqB]kFwAuBrDuIgBqFZoCmAeIwD[H{CcA}I_AnGGsG}AcAdAtAe@bF[aD_EkA}HI}DrBOsBiCqCiOiFJ_DtEqFlF^r@}DgFuC`@kDiFeL|BcCoCeAb@gGuLiF}@v@IzDqB{AiDnBi@uAaCr@CaAaDm@f@iGu@W_M`Ef@uJ{CuC[}DqC_CtBcH}CwCtCqNgBi@sHnCm@sFmD?i@aGoHcBhBaIyAaFiBz@wB~E{IxAeBnCqCf@kEDeBgEuAWwCtLwAh@gB_@G{FoFPgCdLjAzDiJ^qFyEy@qH{GaKqN~@xDoFFsFoBoDgKcAsKn@KtHuApDrB`IoCzG{Fg@oC`G}K{JkCW}HrD_Jv@cI~D_GxG}_@hKyAa@wDgEh@cEeBqFiJk@qBiBgYmFk|KaoC",
+        "resource_state": 2
+      },
+      "trainer": false,
+      "commute": false,
+      "manual": false,
+      "private": false,
+      "visibility": "everyone",
+      "flagged": false,
+      "gear_id": null,
+      "start_latlng": [
+        11.418627,
+        76.714336
+      ],
+      "end_latlng": [
+        11.417883,
+        76.713503
+      ],
+      "average_speed": 4.756,
+      "max_speed": 12.983,
+      "has_heartrate": true,
+      "average_heartrate": 141.5,
+      "max_heartrate": 164,
+      "heartrate_opt_out": false,
+      "display_hide_heartrate_option": true,
+      "elev_high": 2262.8,
+      "elev_low": 1618.2,
+      "upload_id": 19630173065,
+      "upload_id_str": "19630173065",
+      "external_id": "garmin_ping_571962543941",
+      "from_accepted_tag": false,
+      "pr_count": 1,
+      "total_photo_count": 0,
+      "has_kudoed": false
+    },
     {
       "resource_state": 2,
       "athlete": {
