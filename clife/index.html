@@ -174,7 +174,6 @@
 <body>
 <div class="container">
     <h1>Your life</h1>
-    <p class="subtitle">A visual map of your time on earth.</p>
 
     <div class="card">
         <form id="lifeForm" onsubmit="generate(event)">
@@ -258,7 +257,8 @@
         maleRemain:     DARK ? '#1e3a5f' : '#bfdbfe',
         femaleRemain:   DARK ? '#4a1530' : '#fce7f3',
         selfRemain:     DARK ? '#374151' : '#d1d5db',
-        bonus:          '#f59e0b',
+        maleBonusFill:   DARK ? '#2563eb' : '#1d4ed8',
+        femaleBonusFill: DARK ? '#db2777' : '#be185d',
         childMaleRemain:   DARK ? '#1e3a5f' : '#bfdbfe',
         childFemaleRemain: DARK ? '#4c1d2c' : '#fee2e2',
         childFemaleFill:   '#ef4444',
@@ -280,7 +280,7 @@
         div.innerHTML = `
             <div class="form-group">
                 <label for="child_age_${n}">Child ${n} age</label>
-                <input type="number" id="child_age_${n}" name="child_age" min="0" max="17" placeholder="e.g. 8">
+                <input type="number" id="child_age_${n}" name="child_age" min="0" placeholder="e.g. 8">
             </div>
             <div class="form-group">
                 <label for="child_sex_${n}">Child ${n} sex</label>
@@ -311,10 +311,12 @@
 
     // 10×10 life grid. Cells beyond life expectancy show in amber if the
     // person has already exceeded it.
-    function drawLifeGrid(age, lifeExp, filledColor, remainColor) {
+    function drawLifeGrid(age, lifeExp, filledColor, remainColor, bonusColor) {
         const cell = 44;
         const canvas = makeCanvas(10 * cell, 10 * cell);
         const ctx = canvas.getContext('2d');
+        const fadeStart = lifeExp - 5;
+        const [fr, fg, fb] = DARK ? [30, 41, 59] : [255, 255, 255];
 
         for (let i = 0; i < 100; i++) {
             const x = (i % 10) * cell;
@@ -322,12 +324,19 @@
 
             let fill;
             if (i < Math.min(age, lifeExp))    fill = filledColor;
-            else if (i < age)                   fill = C.bonus;       // lived past expectancy
-            else if (i < lifeExp)               fill = remainColor;   // expected future
+            else if (i < age)                   fill = bonusColor;
+            else if (i < lifeExp)               fill = remainColor;
             else                                fill = C.empty;
 
             ctx.fillStyle = fill;
             ctx.fillRect(x, y, cell, cell);
+
+            if (i >= fadeStart && fill !== C.empty) {
+                const alpha = Math.min(0.68, ((i - fadeStart + 0.5) / 10) * 0.85);
+                ctx.fillStyle = `rgba(${fr},${fg},${fb},${alpha.toFixed(2)})`;
+                ctx.fillRect(x, y, cell, cell);
+            }
+
             ctx.strokeStyle = C.gridLine;
             ctx.lineWidth = 0.8;
             ctx.strokeRect(x + 0.5, y + 0.5, cell - 1, cell - 1);
@@ -376,36 +385,127 @@
         return canvas;
     }
 
-    function chartCard(title, meta, canvas, legend) {
+    function chartCard(title, canvas, meta) {
         const div = document.createElement('div');
         div.className = 'chart-card';
-        div.innerHTML = `<div class="chart-title">${title}</div><div class="chart-meta">${meta}</div>`;
+        div.innerHTML = `<div class="chart-title">${title}</div>${meta ? `<div class="chart-meta">${meta}</div>` : ''}`;
         div.appendChild(canvas);
-        if (legend.length) {
-            const leg = document.createElement('div');
-            leg.className = 'legend';
-            legend.forEach(({ color, label }) => {
-                leg.innerHTML += `<span class="legend-item"><span class="legend-swatch" style="background:${color}"></span>${label}</span>`;
-            });
-            div.appendChild(leg);
-        }
         return div;
     }
 
-    function lifeGridCard(title, age, lifeExp, filledColor, remainColor) {
-        const legend = [
-            { color: filledColor, label: `Years lived (${Math.min(age, lifeExp)})` },
-        ];
-        if (age > lifeExp) {
-            legend.push({ color: C.bonus, label: `Beyond expectancy (+${age - lifeExp})` });
-        } else {
-            legend.push({ color: remainColor, label: `Expected future (${lifeExp - age})` });
+    function drawOverlapTimeline(persons) {
+        const now = new Date().getFullYear();
+        const minYear = Math.min(...persons.map(p => p.birthYear)) - 1;
+        const maxYear = Math.max(...persons.map(p => p.deathYear)) + 2;
+        const span = maxYear - minYear;
+
+        const labelW = 100, padTop = 28, padBottom = 38, annotW = 54;
+        const rowH = 46, barH = 20;
+        const W = labelW + 620 + annotW;
+        const H = padTop + persons.length * rowH + padBottom;
+
+        const canvas = makeCanvas(W, H, 'wide');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = C.empty;
+        ctx.fillRect(0, 0, W, H);
+
+        const chartW = W - labelW - annotW;
+        const toX = yr => labelW + ((yr - minYear) / span) * chartW;
+
+        // Year grid lines and axis labels
+        const tick = span > 100 ? 20 : 10;
+        const firstTick = Math.ceil(minYear / tick) * tick;
+        for (let yr = firstTick; yr <= maxYear; yr += tick) {
+            const x = toX(yr);
+            if (x < labelW || x > W - annotW) continue;
+            ctx.strokeStyle = DARK ? '#334155' : '#e2e8f0';
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(x, padTop);
+            ctx.lineTo(x, H - padBottom + 6);
+            ctx.stroke();
+            ctx.fillStyle = DARK ? '#475569' : '#94a3b8';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(yr, x, H - padBottom + 10);
         }
+
+        // Overlap highlight bands (future overlap between user and each family member)
+        const user = persons[0];
+        persons.slice(1).forEach(p => {
+            const start = Math.max(now, p.birthYear);
+            const end = Math.min(user.deathYear, p.deathYear);
+            if (end > start) {
+                ctx.fillStyle = DARK ? 'rgba(255,255,255,0.04)' : 'rgba(79,70,229,0.05)';
+                ctx.fillRect(toX(start), padTop, toX(end) - toX(start), H - padTop - padBottom);
+            }
+        });
+
+        // Bars for each person
+        persons.forEach((person, i) => {
+            const barY = padTop + i * rowH + (rowH - barH) / 2;
+
+            // Lived portion (birth → now)
+            const pastEnd = Math.min(now, person.deathYear);
+            if (pastEnd > person.birthYear) {
+                ctx.fillStyle = person.fillColor;
+                ctx.fillRect(toX(person.birthYear), barY, toX(pastEnd) - toX(person.birthYear), barH);
+            }
+            // Remaining portion (now → expected death)
+            if (now < person.deathYear) {
+                ctx.fillStyle = person.remainColor;
+                ctx.fillRect(toX(now), barY, toX(person.deathYear) - toX(now), barH);
+            }
+
+            // Name label
+            ctx.fillStyle = C.text;
+            ctx.font = '600 11px -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(person.name, labelW - 8, barY + barH / 2);
+
+            // Right-side annotation: years of overlap remaining (or own remaining for user)
+            const overlapEnd = i === 0 ? person.deathYear : Math.min(user.deathYear, person.deathYear);
+            const yrsLeft = Math.max(0, Math.round(overlapEnd - now));
+            ctx.fillStyle = i === 0 ? (DARK ? '#64748b' : '#94a3b8') : person.fillColor;
+            ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(yrsLeft + 'y', W - annotW + 6, barY + barH / 2);
+        });
+
+        // Column header for annotation
+        ctx.fillStyle = DARK ? '#475569' : '#94a3b8';
+        ctx.font = '700 8px monospace';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('LEFT', W - annotW + 6, padTop / 2);
+
+        // NOW line
+        const nowX = toX(now);
+        ctx.save();
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.moveTo(nowX, padTop - 8);
+        ctx.lineTo(nowX, H - padBottom + 6);
+        ctx.stroke();
+        ctx.restore();
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = 'bold 9px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('NOW', nowX, padTop - 11);
+
+        return canvas;
+    }
+
+    function lifeGridCard(title, age, lifeExp, filledColor, remainColor, bonusColor) {
         return chartCard(
             title,
-            `Life expectancy: ${lifeExp} · Age: ${age}`,
-            drawLifeGrid(age, lifeExp, filledColor, remainColor),
-            legend
+            drawLifeGrid(age, lifeExp, filledColor, remainColor, bonusColor)
         );
     }
 
@@ -430,36 +530,71 @@
         const results = document.getElementById('results');
         results.innerHTML = '';
 
+        const currentYear = new Date().getFullYear();
         const lifeExp     = sex === 'M' ? 79 : 81;
         const filledColor = sex === 'M' ? C.maleFill : C.femaleFill;
+        const bonusColor  = sex === 'M' ? C.maleBonusFill : C.femaleBonusFill;
 
-        results.appendChild(lifeGridCard(name, age, lifeExp, filledColor, C.selfRemain));
+        // Build overlap timeline persons
+        const clampDeath = (birth, le) => Math.max(birth + le, currentYear + 1);
+        const overlapPersons = [{
+            name,
+            birthYear:  currentYear - age,
+            deathYear:  clampDeath(currentYear - age, lifeExp),
+            fillColor:  filledColor,
+            remainColor: C.selfRemain,
+        }];
+        if (mAlive === 'yes' && mAge != null && !isNaN(mAge)) {
+            overlapPersons.push({
+                name: 'Mother',
+                birthYear:  currentYear - mAge,
+                deathYear:  clampDeath(currentYear - mAge, 81),
+                fillColor:  C.femaleFill,
+                remainColor: C.femaleRemain,
+            });
+        }
+        if (fAlive === 'yes' && fAge != null && !isNaN(fAge)) {
+            overlapPersons.push({
+                name: 'Father',
+                birthYear:  currentYear - fAge,
+                deathYear:  clampDeath(currentYear - fAge, 79),
+                fillColor:  C.maleFill,
+                remainColor: C.maleRemain,
+            });
+        }
+        children.filter(c => c.age < age).forEach((child, idx) => {
+            overlapPersons.push({
+                name: 'Child ' + (idx + 1),
+                birthYear:  currentYear - child.age,
+                deathYear:  clampDeath(currentYear - child.age, child.sex === 'M' ? 79 : 81),
+                fillColor:  child.sex === 'M' ? C.maleFill : C.childFemaleFill,
+                remainColor: child.sex === 'M' ? C.childMaleRemain : C.childFemaleRemain,
+            });
+        });
+        results.appendChild(lifeGridCard(name, age, lifeExp, filledColor, C.selfRemain, bonusColor));
 
         if (mAlive === 'yes' && mAge != null && !isNaN(mAge)) {
-            results.appendChild(lifeGridCard('Your mother', mAge, 81, C.femaleFill, C.femaleRemain));
+            results.appendChild(lifeGridCard('Your mother', mAge, 81, C.femaleFill, C.femaleRemain, C.femaleBonusFill));
         }
 
         if (fAlive === 'yes' && fAge != null && !isNaN(fAge)) {
-            results.appendChild(lifeGridCard('Your father', fAge, 79, C.maleFill, C.maleRemain));
+            results.appendChild(lifeGridCard('Your father', fAge, 79, C.maleFill, C.maleRemain, C.maleBonusFill));
         }
 
         if (mAlive === 'yes' || fAlive === 'yes') {
-            results.appendChild(chartCard(
-                'Growing up',
-                'Weeks spent with parents each year — each cell = 1 week',
-                drawGrowingUp(age),
-                [
-                    { color: C.growFill, label: 'Weeks together' },
-                    { color: C.empty,    label: 'Weeks apart' },
-                ]
-            ));
+            results.appendChild(chartCard('Growing up', drawGrowingUp(age)));
         }
 
-        children.forEach((child) => {
+        children.filter(c => c.age < age).forEach((child) => {
             const cf = child.sex === 'M' ? C.maleFill : C.childFemaleFill;
             const cr = child.sex === 'M' ? C.childMaleRemain : C.childFemaleRemain;
-            results.appendChild(lifeGridCard('Your child', child.age, 18, cf, cr));
+            const cb = child.sex === 'M' ? C.maleBonusFill : C.femaleBonusFill;
+            results.appendChild(lifeGridCard('Your child', child.age, 18, cf, cr, cb));
         });
+
+        if (overlapPersons.length > 1) {
+            results.appendChild(chartCard('Family overlap', drawOverlapTimeline(overlapPersons)));
+        }
     }
 </script>
 </body>
