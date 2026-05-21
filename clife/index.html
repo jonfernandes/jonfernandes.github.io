@@ -35,25 +35,25 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100dvh;
-            padding: 28px 16px 56px;
+            padding: 20px 16px 56px;
         }
 
         .container { max-width: 680px; margin: 0 auto; }
 
         h1 {
-            font-size: clamp(1.8rem, 5vw, 2.6rem);
+            font-size: clamp(1.6rem, 5vw, 2.6rem);
             font-weight: 800;
             letter-spacing: -0.03em;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
-        .subtitle { color: var(--muted); margin-bottom: 32px; font-size: 1rem; }
+        .subtitle { color: var(--muted); margin-bottom: 28px; font-size: 1rem; }
 
         .card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 28px 24px;
-            margin-bottom: 24px;
+            padding: 24px 20px;
+            margin-bottom: 20px;
         }
 
         .section-label {
@@ -67,8 +67,8 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .form-group { margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { margin-bottom: 18px; }
         .form-group:last-child { margin-bottom: 0; }
 
         label {
@@ -78,12 +78,12 @@
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: var(--muted);
-            margin-bottom: 7px;
+            margin-bottom: 6px;
         }
 
         input, select {
             width: 100%;
-            padding: 11px 14px;
+            padding: 13px 14px;
             border: 1.5px solid var(--border);
             border-radius: 10px;
             background: var(--input-bg);
@@ -94,13 +94,14 @@
             transition: border-color 0.15s;
             -webkit-appearance: none;
             appearance: none;
+            min-height: 48px;
         }
         input:focus, select:focus { border-color: var(--accent); }
 
         .hidden { display: none !important; }
 
         .add-btn {
-            padding: 9px 16px;
+            padding: 11px 16px;
             border: 1.5px dashed var(--border);
             border-radius: 8px;
             background: transparent;
@@ -110,12 +111,14 @@
             font-family: inherit;
             transition: all 0.15s;
             margin-top: 4px;
+            touch-action: manipulation;
+            min-height: 44px;
         }
-        .add-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .add-btn:hover, .add-btn:active { border-color: var(--accent); color: var(--accent); }
 
         .submit-btn {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             background: var(--accent);
             color: white;
             border: none;
@@ -125,21 +128,56 @@
             cursor: pointer;
             font-family: inherit;
             transition: background 0.15s;
-            margin-top: 28px;
+            margin-top: 24px;
             letter-spacing: 0.01em;
+            touch-action: manipulation;
         }
-        .submit-btn:hover { background: var(--accent-hover); }
+        .submit-btn:hover, .submit-btn:active { background: var(--accent-hover); }
+
+        /* Compact summary bar shown after form is submitted */
+        .form-summary {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .form-summary-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .edit-btn {
+            padding: 8px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--accent);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            flex-shrink: 0;
+            touch-action: manipulation;
+        }
 
         .chart-card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
-        .chart-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 3px; }
-        .chart-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+        .chart-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 3px; }
+        .chart-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 14px; }
 
         canvas {
             display: block;
@@ -148,6 +186,16 @@
             height: auto;
         }
         canvas.wide { max-width: 100%; }
+
+        /* Horizontally scrollable wrapper for wide canvases */
+        .chart-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .chart-scroll canvas {
+            width: auto !important;
+            max-width: none !important;
+        }
 
         .legend {
             display: flex;
@@ -166,8 +214,9 @@
         }
 
         @media (max-width: 480px) {
+            body { padding-top: 14px; }
             .form-row { grid-template-columns: 1fr; }
-            .card, .chart-card { padding: 20px 16px; }
+            .card, .chart-card { padding: 18px 14px; }
         }
     </style>
 </head>
@@ -185,7 +234,7 @@
                 </div>
                 <div class="form-group">
                     <label for="age">Age</label>
-                    <input type="number" id="age" min="1" max="120" required placeholder="e.g. 35">
+                    <input type="number" id="age" min="1" max="120" required placeholder="e.g. 35" inputmode="numeric">
                 </div>
             </div>
             <div class="form-group">
@@ -207,7 +256,7 @@
                 </div>
                 <div class="form-group hidden" id="mother_age_div">
                     <label for="mother_age">Mother's age</label>
-                    <input type="number" id="mother_age" min="1" max="120" placeholder="e.g. 65">
+                    <input type="number" id="mother_age" min="1" max="120" placeholder="e.g. 65" inputmode="numeric">
                 </div>
             </div>
             <div class="form-row">
@@ -220,7 +269,7 @@
                 </div>
                 <div class="form-group hidden" id="father_age_div">
                     <label for="father_age">Father's age</label>
-                    <input type="number" id="father_age" min="1" max="120" placeholder="e.g. 68">
+                    <input type="number" id="father_age" min="1" max="120" placeholder="e.g. 68" inputmode="numeric">
                 </div>
             </div>
 
@@ -280,7 +329,7 @@
         div.innerHTML = `
             <div class="form-group">
                 <label for="child_age_${n}">Child ${n} age</label>
-                <input type="number" id="child_age_${n}" name="child_age" min="0" placeholder="e.g. 8">
+                <input type="number" id="child_age_${n}" name="child_age" inputmode="numeric" min="0" placeholder="e.g. 8">
             </div>
             <div class="form-group">
                 <label for="child_sex_${n}">Child ${n} sex</label>
@@ -385,12 +434,27 @@
         return canvas;
     }
 
-    function chartCard(title, canvas, meta) {
+    function expandForm() {
+        document.querySelector('.card').classList.remove('hidden');
+        const s = document.getElementById('formSummary');
+        if (s) s.remove();
+        document.getElementById('results').innerHTML = '';
+        document.querySelector('.card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function chartCard(title, content, meta) {
         const div = document.createElement('div');
         div.className = 'chart-card';
         div.innerHTML = `<div class="chart-title">${title}</div>${meta ? `<div class="chart-meta">${meta}</div>` : ''}`;
-        div.appendChild(canvas);
+        div.appendChild(content);
         return div;
+    }
+
+    function scrollWrap(canvas) {
+        const d = document.createElement('div');
+        d.className = 'chart-scroll';
+        d.appendChild(canvas);
+        return d;
     }
 
     function drawOverlapTimeline(persons) {
@@ -530,6 +594,22 @@
         const results = document.getElementById('results');
         results.innerHTML = '';
 
+        // Collapse form to a compact summary bar
+        const formCard = document.querySelector('.card');
+        let formSummary = document.getElementById('formSummary');
+        if (!formSummary) {
+            formSummary = document.createElement('div');
+            formSummary.id = 'formSummary';
+            formSummary.className = 'form-summary';
+            formCard.insertAdjacentElement('afterend', formSummary);
+        }
+        const parts = [name + ', ' + age];
+        if (mAlive === 'yes') parts.push('mother');
+        if (fAlive === 'yes') parts.push('father');
+        if (children.length > 0) parts.push(children.length + ' child' + (children.length > 1 ? 'ren' : ''));
+        formSummary.innerHTML = `<span class="form-summary-label">${parts.join(' · ')}</span><button type="button" class="edit-btn" onclick="expandForm()">Edit</button>`;
+        formCard.classList.add('hidden');
+
         const currentYear = new Date().getFullYear();
         const lifeExp     = sex === 'M' ? 79 : 81;
         const filledColor = sex === 'M' ? C.maleFill : C.femaleFill;
@@ -582,7 +662,7 @@
         }
 
         if (mAlive === 'yes' || fAlive === 'yes') {
-            results.appendChild(chartCard('Growing up', drawGrowingUp(age)));
+            results.appendChild(chartCard('Growing up', scrollWrap(drawGrowingUp(age))));
         }
 
         children.filter(c => c.age < age).forEach((child) => {
@@ -593,8 +673,10 @@
         });
 
         if (overlapPersons.length > 1) {
-            results.appendChild(chartCard('Family overlap', drawOverlapTimeline(overlapPersons)));
+            results.appendChild(chartCard('Family overlap', scrollWrap(drawOverlapTimeline(overlapPersons))));
         }
+
+        requestAnimationFrame(() => results.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     }
 </script>
 </body>
