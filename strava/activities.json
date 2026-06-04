@@ -1,6 +1,71 @@
 {
-  "generated_at": "2026-06-03T22:20:20.857Z",
+  "generated_at": "2026-06-04T05:30:11.504Z",
   "activities": [
+    {
+      "resource_state": 2,
+      "athlete": {
+        "id": 181012349,
+        "resource_state": 1
+      },
+      "name": "Morning Workout",
+      "distance": 489.6,
+      "moving_time": 1043,
+      "elapsed_time": 1582,
+      "total_elevation_gain": 0,
+      "type": "Workout",
+      "sport_type": "Workout",
+      "workout_type": null,
+      "device_name": "Garmin Forerunner 255",
+      "id": 18778644380,
+      "start_date": "2026-06-04T02:53:28Z",
+      "start_date_local": "2026-06-04T08:23:28Z",
+      "timezone": "(GMT+05:30) Asia/Kolkata",
+      "utc_offset": 19800,
+      "location_city": null,
+      "location_state": null,
+      "location_country": null,
+      "achievement_count": 0,
+      "kudos_count": 0,
+      "comment_count": 0,
+      "athlete_count": 1,
+      "photo_count": 0,
+      "map": {
+        "id": "a18778644380",
+        "summary_polyline": "{audAwdfsMAC?DB@KDAEHMLAK@EFB??CCPE?ABBBC@CABCA?A@DCADE@?BHM@IHC?B@GABGFANABK??LGAVWDGGDAEBCFD@E?DAEDEAP?CCBAECF?EFAC@BC?BECIH@GF?A??@AEI@?HMNJGBFDSDB?ECHSHB?G?DJHCCGOFPKFGCBD@CABIED@AHE?GMFCCCH@HHKC@@B?AAAB?DEGJICF?DIB@?MEFAFG@FPBMB?DG@IMFKLCAMLBDH??IABEBAGDKH?FICDAA@@?EBBC@",
+        "resource_state": 2
+      },
+      "trainer": false,
+      "commute": false,
+      "manual": false,
+      "private": false,
+      "visibility": "everyone",
+      "flagged": false,
+      "gear_id": null,
+      "start_latlng": [
+        11.41806,
+        76.713889
+      ],
+      "end_latlng": [
+        11.418143,
+        76.713816
+      ],
+      "average_speed": 0.469,
+      "max_speed": 1.7,
+      "has_heartrate": true,
+      "average_heartrate": 62.2,
+      "max_heartrate": 110,
+      "heartrate_opt_out": false,
+      "display_hide_heartrate_option": true,
+      "elev_high": 2263.6,
+      "elev_low": 2260.6,
+      "upload_id": 19888715091,
+      "upload_id_str": "19888715091",
+      "external_id": "garmin_ping_580234981834",
+      "from_accepted_tag": false,
+      "pr_count": 0,
+      "total_photo_count": 0,
+      "has_kudoed": false
+    },
     {
       "resource_state": 2,
       "athlete": {
