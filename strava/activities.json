@@ -1,6 +1,74 @@
 {
-  "generated_at": "2026-07-01T13:29:07.511Z",
+  "generated_at": "2026-07-01T16:12:48.372Z",
   "activities": [
+    {
+      "resource_state": 2,
+      "athlete": {
+        "id": 181012349,
+        "id_str": "181012349",
+        "resource_state": 1
+      },
+      "name": "Afternoon Workout",
+      "distance": 457.9,
+      "moving_time": 895,
+      "elapsed_time": 2112,
+      "total_elevation_gain": 5,
+      "type": "Workout",
+      "sport_type": "Workout",
+      "workout_type": null,
+      "device_name": "Garmin Forerunner 255",
+      "id": 19138253447,
+      "id_str": "19138253447",
+      "start_date": "2026-07-01T13:31:26Z",
+      "start_date_local": "2026-07-01T14:31:26Z",
+      "timezone": "(GMT+00:00) Europe/London",
+      "utc_offset": 3600,
+      "location_city": null,
+      "location_state": null,
+      "location_country": null,
+      "achievement_count": 0,
+      "kudos_count": 0,
+      "comment_count": 0,
+      "athlete_count": 1,
+      "photo_count": 0,
+      "map": {
+        "id": "a19138253447",
+        "summary_polyline": "a{qtHbb|ITNF@@G?@OM?FNLCA@EE?HE?BB??CDAAAE?A@DH@EGABCBIC?AB?DBBECB@?CI@EFB@BE@BCA@DB@A?HICBBBI@DEG@?AFC?@A@@IG@?DB?AB@ABDACABHEADAAGBA@DDDKADE@?EACBA@BACCHBAAGED?DB?BIDA@CBDE?CDCAHGC@?EGEDFE?DC@@CBA??CGNB@@C?G?BCABEDJEA@C?B?GBHACG@AEFBLA?EGBADLEBHBE?AUCEDCCE@@FBQHB@JB@U?DCCEFD@C@AEBC?BCAEFAC@?DHA@B@CGH@@BAG@CIGCDDN?B@CEMHE?D@?AHAIDDDC@CEBDDK?@@@BAEE?EAHEEDA?BD@?GEPBIAAABD?EABGABECA@CJDD@EB?E??GED@DGCD@BEABDCCE?@?MAD@ADJB@E@DE?@K??L",
+        "resource_state": 2
+      },
+      "trainer": false,
+      "commute": false,
+      "manual": false,
+      "private": false,
+      "visibility": "everyone",
+      "flagged": false,
+      "gear_id": null,
+      "start_latlng": [
+        50.723216,
+        -1.787376
+      ],
+      "end_latlng": [
+        50.723064,
+        -1.787526
+      ],
+      "average_speed": 0.512,
+      "max_speed": 1.56,
+      "average_cadence": 57,
+      "has_heartrate": true,
+      "average_heartrate": 78.1,
+      "max_heartrate": 94,
+      "heartrate_opt_out": false,
+      "display_hide_heartrate_option": true,
+      "elev_high": 11,
+      "elev_low": 6.2,
+      "upload_id": 20254145446,
+      "upload_id_str": "20254145446",
+      "external_id": "garmin_ping_592441232023",
+      "from_accepted_tag": false,
+      "pr_count": 0,
+      "total_photo_count": 0,
+      "has_kudoed": false
+    },
     {
       "resource_state": 2,
       "athlete": {
